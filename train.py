@@ -280,7 +280,7 @@ class GPT(nn.Module):
         cos_sin = self.cos[:, :T], self.sin[:, :T]
 
         x = self.transformer.wte(idx)
-        x = norm(x) * (self.config.n_embd ** 0.5)  # scale by sqrt(dim) after norm
+        # Skip norm — embedding init N(0,1) already has magnitude ~sqrt(dim)
         x0 = x
         for i, block in enumerate(self.transformer.h):
             x = self.resid_lambdas[i] * x + self.x0_lambdas[i] * x0
