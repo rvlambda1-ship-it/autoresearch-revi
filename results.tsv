@@ -121,3 +121,4 @@ cc17bd2	2.279776	3.9	discard	remove x0 shortcut: worse (2.280 vs 2.270)
 2b9234e	N/A	N/A	discard	per-head temperature: 1D param breaks Muon matrix grouping
 d163482	2.272300	3.9	discard	attn scale 1/d instead of 1/sqrt(d): slightly worse (2.272 vs 2.270)
 6dfff7c	N/A	N/A	discard	MLP bias: 1D bias breaks Muon matrix grouping
+e7573ca	2.322460	3.9	discard	SwiGLU MLP: too slow (17 steps vs 29), 2.322 vs 2.270
