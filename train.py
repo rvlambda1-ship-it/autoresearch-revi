@@ -451,7 +451,7 @@ WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
 WARMUP_RATIO = 0.05     # shorter warmup: maximize steps at peak LR
 WARMDOWN_RATIO = 0.3    # shorter warmdown: more time at full LR
-FINAL_LR_FRAC = 0.1     # final LR as fraction of initial
+FINAL_LR_FRAC = 0.15    # slightly higher min LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
