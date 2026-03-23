@@ -123,3 +123,4 @@ d163482	2.272300	3.9	discard	attn scale 1/d instead of 1/sqrt(d): slightly worse
 6dfff7c	N/A	N/A	discard	MLP bias: 1D bias breaks Muon matrix grouping
 e7573ca	2.322460	3.9	discard	SwiGLU MLP: too slow (17 steps vs 29), 2.322 vs 2.270
 eed53b3	2.278031	3.9	discard	GQA n_kv_head=2: slower (17 steps), slightly worse (2.278 vs 2.270)
+e24c48e	2.265440	3.4	keep	MLP ratio 3x: faster, less VRAM, better val_bpb (2.265 vs 2.270)
