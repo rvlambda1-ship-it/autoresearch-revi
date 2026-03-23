@@ -83,7 +83,7 @@ class CausalSelfAttention(nn.Module):
 
         cos, sin = cos_sin
         q, k = apply_rotary_emb(q, cos, sin), apply_rotary_emb(k, cos, sin)
-        q, k = norm(q), norm(k)
+        # Skip QK norm — pre-norm in parallel block is sufficient
 
         # Transpose to (B, n_head, T, head_dim) for SDPA
         q = q.transpose(1, 2)
