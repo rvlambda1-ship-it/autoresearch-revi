@@ -121,9 +121,9 @@ class Block(nn.Module):
         self.mlp = MLP(config)
 
     def forward(self, x, ve, cos_sin, window_size):
-        # Parallel attention + MLP (PaLM-style): single norm, add both
-        h = norm(x)
-        x = x + self.attn(h, ve, cos_sin, window_size) + self.mlp(h)
+        # Sequential: MLP sees post-attention representation
+        x = x + self.attn(norm(x), ve, cos_sin, window_size)
+        x = x + self.mlp(norm(x))
         return x
 
 
