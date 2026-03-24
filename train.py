@@ -101,9 +101,11 @@ class CausalSelfAttention(nn.Module):
 
 
 class MLP(nn.Module):
-    def __init__(self, config):
+    def __init__(self, config, layer_idx=0):
         super().__init__()
-        hidden = int(1.5 * config.n_embd)  # 1.5x MLP ratio
+        # Tapered MLP: 2x in first 3 layers, 1x in rest
+        ratio = 2.0 if layer_idx < 3 else 1.0
+        hidden = int(ratio * config.n_embd)
         self.c_fc = nn.Linear(config.n_embd, hidden, bias=False)
         self.c_proj = nn.Linear(hidden, config.n_embd, bias=False)
 
@@ -120,7 +122,7 @@ class Block(nn.Module):
         self.attn = CausalSelfAttention(config, layer_idx)
         self.has_mlp = layer_idx < config.n_layer - 3  # skip MLP in last 3 layers
         if self.has_mlp:
-            self.mlp = MLP(config)
+            self.mlp = MLP(config, layer_idx)
 
     def forward(self, x, ve, cos_sin, window_size):
         # Sequential: MLP sees post-attention representation
