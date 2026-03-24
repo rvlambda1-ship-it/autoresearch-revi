@@ -131,3 +131,4 @@ b9ca4c1	2.330302	4.1	discard	DEPTH=12 with 2x MLP: too slow (15 eff steps), 2.33
 a0f3fb4	2.263367	2.9	discard	MATRIX_LR 0.025: marginal worse (2.263 vs 2.262)
 ede9f4d	2.262780	2.9	discard	WARMDOWN_RATIO 0.2: tied (2.2628 vs 2.2622)
 8dd2fd8	2.259399	3.5	keep	sequential blocks: MLP sees post-attn repr (2.259 vs 2.262)
+aac4a9b	2.262873	3.5	discard	HEAD_DIM=32 (20 heads): slightly worse (2.263 vs 2.259)
