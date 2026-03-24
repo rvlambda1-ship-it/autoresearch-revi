@@ -443,7 +443,7 @@ HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attent
 WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
-TOTAL_BATCH_SIZE = 2**14 # ~16K tokens per optimizer step (reduced for small GPU)
+TOTAL_BATCH_SIZE = 2**15 # ~32K tokens per optimizer step (larger batch for gradient quality)
 EMBEDDING_LR = 1.6      # higher LR for unnormed embeddings
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
 MATRIX_LR = 0.02        # learning rate for matrix parameters (Muon)
