@@ -188,7 +188,7 @@ class GPT(nn.Module):
         # Keep embeddings in fp32 — autocast handles fp16 during forward pass
         # fp16 embeddings cause NaN with AdamW optimizer states on small GPUs
 
-    def _precompute_rotary_embeddings(self, seq_len, head_dim, base=50000, device=None):
+    def _precompute_rotary_embeddings(self, seq_len, head_dim, base=10000, device=None):
         if device is None:
             device = self.transformer.wte.weight.device
         channel_range = torch.arange(0, head_dim, 2, dtype=torch.float32, device=device)
