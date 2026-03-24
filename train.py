@@ -460,7 +460,7 @@ FINAL_LR_FRAC = 0.1     # lower min LR for deeper decay
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 10              # more layers = more transformer capacity
+DEPTH = 11              # extra depth with MLP-free last layers saves enough compute
 DEVICE_BATCH_SIZE = 64   # per-device batch size
 
 # ---------------------------------------------------------------------------
