@@ -126,3 +126,4 @@ eed53b3	2.278031	3.9	discard	GQA n_kv_head=2: slower (17 steps), slightly worse 
 e24c48e	2.265440	3.4	keep	MLP ratio 3x: faster, less VRAM, better val_bpb (2.265 vs 2.270)
 0de5566	2.262482	3.2	keep	MLP ratio 2.5x: even better (2.262 vs 2.265), less VRAM, more steps
 3f65d56	2.262248	2.9	keep	MLP ratio 2x: tied with 2.5x (2.2622 vs 2.2625), less VRAM
+b9ca4c1	2.330302	4.1	discard	DEPTH=12 with 2x MLP: too slow (15 eff steps), 2.330 vs 2.262
