@@ -36,7 +36,24 @@ Each experiment runs on a single GPU. The training script runs for a **fixed tim
 
 **Simplicity criterion**: All else being equal, simpler is better. A small improvement that adds ugly complexity is not worth it. Conversely, removing something and getting equal or better results is a great outcome — that's a simplification win. When evaluating whether to keep a change, weigh the complexity cost against the improvement magnitude. A 0.001 val_bpb improvement that adds 20 lines of hacky code? Probably not worth it. A 0.001 val_bpb improvement from deleting code? Definitely keep. An improvement of ~0 but much simpler code? Keep.
 
+### The speed-capacity tradeoff
+
+Under a fixed 5-minute time budget, **training throughput (steps per minute) is as important as model capacity**. A change that adds 10% more parameters but costs 20% more time per step will almost certainly lose — fewer training steps means less learning. Always check `num_steps` in the output. If it dropped significantly, the experiment likely failed regardless of the architecture's theoretical capacity. When in doubt, prefer changes that make per-step time faster (without destroying capacity) over changes that increase capacity at the cost of speed.
+
 **The first run**: Your very first run should always be to establish the baseline, so you will run the training script as is.
+
+## Known constraints (do NOT re-test these)
+
+These have been empirically validated across multiple experiments. Do not waste runs re-testing them.
+
+- **Muon cannot handle 1D parameters.** Do not add bias terms, per-head scalars, learned temperatures, or any parameter that isn't a 2D matrix to the model — unless you also modify the optimizer param grouping to route them to AdamW. Crashes are guaranteed otherwise (torch.stack fails on mismatched shapes).
+- **Larger models lose under 5-min budgets on this GPU.** DEPTH>10 has been tested 8+ times (DEPTH=11, 12, 13, 14) and always produces fewer training steps, resulting in worse val_bpb. Do not try increasing depth or width unless you simultaneously find a way to speed up per-step time to compensate.
+- **Zero warmup destabilizes training.** Always use WARMUP_RATIO >= 0.05. Tested twice; both times caused large regressions.
+- **UNEMBEDDING_LR > 0.01 diverges.** Tested at 0.012 and 0.016 across multiple configurations; catastrophic every time (+0.05-0.06 bpb regression).
+- **EMBEDDING_LR > 1.0 is harmful.** 1.5 was too high (+0.016 bpb). The sweet spot is around 1.0.
+- **Label smoothing is harmful** at this scale (+0.2 bpb regression with smoothing=0.1).
+- **SwiGLU is too slow.** 3 weight matrices per MLP layer instead of 2 means ~40% fewer training steps. Tested twice; never competitive.
+- **GQA (n_kv_head=2) is slower than MQA (n_kv_head=1)** at this model scale. Extra KV parameters slow steps without helping. Tested 3 times.
 
 ## Output format
 
@@ -86,6 +103,22 @@ b2c3d4e	0.993200	44.2	keep	increase LR to 0.04
 c3d4e5f	1.005000	44.0	discard	switch to GeLU activation
 d4e5f6g	0.000000	0.0	crash	double model width (OOM)
 ```
+
+## Experiment discipline
+
+- **One variable at a time.** Never change two things simultaneously — you won't know which one helped or hurt.
+- **Sweep in one direction first.** When tuning a hyperparameter (e.g., LR), keep going in the direction that's working until it stops, then stop. Don't oscillate.
+- **Log step count.** When describing a discard, include the effective step count if it changed — this is the most common explanation for regressions.
+- **Expect ~80% failure rate.** A 20% keep rate is normal for hyperparameter search. Do not treat a streak of discards as a signal to make increasingly radical changes — that tends to produce crashes and large regressions. Steady, methodical exploration beats wild swings.
+
+## When progress stalls
+
+After 20+ consecutive discards, the current configuration is likely near a local optimum for incremental changes. Shift strategy:
+
+- **Combine near-misses**: If two independent changes each gave ~0.001 improvement or were tied, try them together — interactions can compound.
+- **Revisit discarded ideas in new context**: An idea that lost before may win after the architecture changed. For example, sequential blocks lost at experiment #110 (bpb 2.277 vs 2.270) but won at experiment #131 (bpb 2.259 vs 2.262) after MLP ratio was reduced. Architecture interactions matter.
+- **Focus on compute efficiency**: Any change that makes per-step time faster (without hurting capacity too much) is likely to win, because more steps = more learning in the fixed budget.
+- **Try fundamentally different approaches**: e.g., different training dynamics (curriculum learning, batch size schedules), alternative optimizer configurations, or novel architectural patterns that stay within the Muon 2D-parameter constraint.
 
 ## The experiment loop
 
