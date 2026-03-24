@@ -533,8 +533,7 @@ def get_lr_multiplier(progress):
         return FINAL_LR_FRAC + 0.5 * (1.0 - FINAL_LR_FRAC) * (1.0 + math.cos(math.pi * decay_progress))
 
 def get_muon_momentum(step):
-    frac = min(step / 300, 1)
-    return (1 - frac) * 0.85 + frac * 0.95
+    return 0.85  # constant low momentum (better for short training runs)
 
 def get_weight_decay(progress):
     return WEIGHT_DECAY  # constant weight decay
