@@ -582,8 +582,8 @@ while True:
     optimizer.step()
     model.zero_grad(set_to_none=True)
 
-    # Update EMA weights with adaptive decay (increases from 0.85 to 0.95 over training)
-    ema_decay = 0.85 + 0.10 * progress
+    # Update EMA weights with adaptive decay (increases from 0.88 to 0.95 over training)
+    ema_decay = 0.88 + 0.07 * progress
     with torch.no_grad():
         torch._foreach_lerp_(ema_params, list(model.parameters()), 1 - ema_decay)
 
