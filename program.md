@@ -76,6 +76,41 @@ These have been empirically validated across multiple experiments. Do not waste 
 - **EMA decay sweep**: 0.85→2.221, 0.9→2.211, 0.92→2.208, 0.93→2.211, 0.95→2.220. Adaptive 0.88→0.95 is best (2.205).
 - **UNEMBEDDING_LR sensitivity persists even with EMA.** 0.01 still +0.031 bpb worse. Fundamental, not noise.
 - **Hyperparameter optima are largely unchanged by EMA.** MATRIX_LR, WARMDOWN_RATIO, FINAL_LR_FRAC all same optima. EMA is orthogonal to training dynamics.
+- **Smaller batch + EMA is a massive win.** Batch 8K (DEVICE=32, TOTAL=2^13) with adaptive EMA gave 2.175 vs 2.205 (-0.030 bpb). 80 steps vs 47, only 1.7GB VRAM. EMA smooths gradient noise from smaller batches while more optimizer steps give more learning. This is the single biggest improvement since the initial architecture was set up.
+- **EMBEDDING_LR sweet spot was 1.6 at batch 16K.** May need re-tuning at smaller batch sizes — more steps means different effective LR dynamics.
+- **Previous batch size tests (pre-EMA) failed.** Run 58 (batch 8K, 2.389), run 119 (batch 8K, 2.275) — both much worse. EMA is what makes small batches viable.
+
+## Strategy: EMA + small batch synergy (current, runs 221+)
+
+**Key insight**: EMA weight averaging and smaller batch sizes have a powerful synergy. EMA smooths the noise from smaller batches, while smaller batches give more optimizer steps in the fixed 5-min budget. This broke through a 50-experiment plateau.
+
+**Executed experiments in this strategy (do NOT repeat):**
+- Run 221: EMA decay=0.95 → 2.220 (keep, first EMA win)
+- Run 222: EMA decay=0.9 → 2.211 (keep)
+- Run 223: EMA decay=0.85 → 2.221 (discard, too much averaging)
+- Run 224: EMA decay=0.92 → 2.208 (keep)
+- Run 225: EMA decay=0.93 → 2.211 (discard)
+- Run 226: EMA decay=0.91 → 2.209 (discard)
+- Run 227: EMA with foreach_lerp_ optimization → 2.207 (keep, same quality, faster)
+- Run 228: EMA decay=0.9 fast impl → 2.211 (discard)
+- Run 229: Late-start EMA (after 30% training) → 2.208 (discard)
+- Run 230: WARMDOWN_RATIO=0.2 with EMA → 2.208 (discard)
+- Run 231: FINAL_LR_FRAC=0.05 with EMA → 2.211 (discard)
+- Run 232: MATRIX_LR=0.025 with EMA → 2.212 (discard)
+- Run 233: EMBEDDING_LR=1.7 with EMA → 2.207 (discard, tied)
+- Run 234: SWA uniform averaging → 2.232 (discard, much worse than EMA)
+- Run 235: UNEMBEDDING_LR=0.01 with EMA → 2.236 (discard)
+- Run 236: Adaptive EMA 0.85→0.95 → 2.206 (keep)
+- Run 237: Adaptive EMA 0.80→0.95 → 2.212 (discard)
+- Run 238: Adaptive EMA 0.88→0.95 → 2.205 (keep, best EMA-only)
+- Run 239: Adaptive EMA 0.90→0.95 → 2.205 (discard)
+- Run 240: Adaptive EMA 0.88→0.92 → 2.209 (discard)
+- Run 241: Adaptive EMA 0.88→0.98 → 2.207 (discard)
+- Run 242: WARMDOWN_RATIO=0.4 with EMA → 2.205 (discard)
+- Run 243: Batch 8K + EMA → **2.175** (keep, massive -0.030 improvement)
+- Run 244: Batch 4K + EMA → pending
+
+**Current exploration direction**: Batch size reduction sweep, then re-tune hyperparameters at new batch size.
 
 ## Output format
 
