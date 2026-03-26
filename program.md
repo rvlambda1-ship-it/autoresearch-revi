@@ -54,6 +54,23 @@ These have been empirically validated across multiple experiments. Do not waste 
 - **Label smoothing is harmful** at this scale (+0.2 bpb regression with smoothing=0.1).
 - **SwiGLU is too slow.** 3 weight matrices per MLP layer instead of 2 means ~40% fewer training steps. Tested twice; never competitive.
 - **GQA (n_kv_head=2) is slower than MQA (n_kv_head=1)** at this model scale. Extra KV parameters slow steps without helping. Tested 3 times.
+- **torch.compile reduce-overhead crashes on Turing GPUs.** OverflowError in CUDA static launcher. Do not use mode="reduce-overhead".
+- **Muon momentum 0.95 is too aggressive for short runs.** The 300-step warmup keeps momentum at ~0.85 for all 47 steps. This is optimal. Do not shorten warmup.
+- **Embedding norm hurts** (+0.047 bpb). N(0,1) init with sqrt(dim) scaling already provides correct magnitude.
+- **UNEMBEDDING_LR extremely sensitive around 0.008**: 0.006→+0.051, 0.01→+0.037. Do not deviate.
+- **resid_lambdas are important** (+0.034 regression when removed). Learned residual scaling interacts with x0 shortcut.
+- **Weight tying is catastrophic** (+1.02 bpb). Embedding/unembedding have very different optimal LRs.
+- **EMBEDDING_LR sweet spot is 1.6.** Tested 1.2-2.0 range. Clear optimum.
+- **Near-misses don't reliably combine.** Tested multiple combinations — interaction effects are unpredictable.
+- **Stochastic depth crashes with torch.compile** (inductor crash).
+- **Factored embeddings are catastrophic.** Both 256-dim (+0.58) and 512-dim (+0.56). Projection bottleneck kills token discrimination.
+- **Multi-token prediction hurts.** Both separate-head (+0.18) and shared-head (+0.035) variants worse. Auxiliary gradients interfere with primary task.
+- **Cosine LR is far better than linear** (+0.068 regression with linear). The cosine shape is optimal for 47 steps.
+- **Cosine warm restarts hurt** (+0.081). LR spike at midpoint disrupts learning with so few steps.
+- **Dropout hurts** (+0.018 with p=0.05). Model is underfitting with 47 steps, not overfitting.
+- **Muon ns_steps=4 is worse than 3** (+0.020, fewer steps). Extra Newton-Schulz iteration costs compute.
+- **x0_lambda init 0.1 is precisely optimal.** 0.05→+0.010, 0.12→+0.040, 0.15→+0.020, 0.2→+0.021.
+- **Depthwise conv before attention hurts** (+0.012, +0.6GB VRAM). Redundant with full attention.
 
 ## Output format
 
