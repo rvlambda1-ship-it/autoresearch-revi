@@ -464,7 +464,7 @@ USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not 
 # Model size
 DEPTH = 10              # more layers = more transformer capacity
 DEVICE_BATCH_SIZE = 64   # per-device batch size
-EMA_DECAY = 0.9          # exponential moving average decay for weight averaging
+EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
 # ---------------------------------------------------------------------------
 # Setup: tokenizer, model, optimizer, dataloader
