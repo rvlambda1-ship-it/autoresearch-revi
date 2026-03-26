@@ -449,7 +449,7 @@ HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attent
 WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
-TOTAL_BATCH_SIZE = 2**13 # ~8K tokens per optimizer step (more steps, EMA smooths noise)
+TOTAL_BATCH_SIZE = 2**12 # ~4K tokens per optimizer step (even more steps with EMA)
 EMBEDDING_LR = 1.6      # higher LR for unnormed embeddings
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
 MATRIX_LR = 0.02        # learning rate for matrix parameters (Muon)
@@ -463,7 +463,7 @@ USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not 
 
 # Model size
 DEPTH = 10              # more layers = more transformer capacity
-DEVICE_BATCH_SIZE = 32   # per-device batch size (halved for smaller batch)
+DEVICE_BATCH_SIZE = 16   # per-device batch size (4K tokens)
 EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
 # ---------------------------------------------------------------------------
