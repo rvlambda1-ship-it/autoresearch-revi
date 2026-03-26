@@ -523,8 +523,8 @@ optimizer = model.setup_optimizer(
 
 model = torch.compile(model, dynamic=False)
 
-# EMA: shadow copy of all parameters for weight averaging
-ema_params = {name: p.clone().detach() for name, p in model.named_parameters()}
+# EMA: flat list of shadow parameters for fast foreach update
+ema_params = [p.clone().detach() for p in model.parameters()]
 
 train_loader = make_dataloader(tokenizer, DEVICE_BATCH_SIZE, MAX_SEQ_LEN, "train")
 x, y, epoch = next(train_loader)  # prefetch first batch
@@ -582,10 +582,9 @@ while True:
     optimizer.step()
     model.zero_grad(set_to_none=True)
 
-    # Update EMA weights
+    # Update EMA weights (fast vectorized update)
     with torch.no_grad():
-        for name, p in model.named_parameters():
-            ema_params[name].lerp_(p, 1 - EMA_DECAY)
+        torch._foreach_lerp_(ema_params, list(model.parameters()), 1 - EMA_DECAY)
 
     train_loss_f = train_loss.item()
 
@@ -632,8 +631,8 @@ total_tokens = step * TOTAL_BATCH_SIZE
 
 # Swap in EMA weights for evaluation
 with torch.no_grad():
-    for name, p in model.named_parameters():
-        p.copy_(ema_params[name])
+    for p, ema_p in zip(model.parameters(), ema_params):
+        p.copy_(ema_p)
 
 # Final eval
 model.eval()
