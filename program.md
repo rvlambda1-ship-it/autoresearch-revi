@@ -71,6 +71,11 @@ These have been empirically validated across multiple experiments. Do not waste 
 - **Muon ns_steps=4 is worse than 3** (+0.020, fewer steps). Extra Newton-Schulz iteration costs compute.
 - **x0_lambda init 0.1 is precisely optimal.** 0.05→+0.010, 0.12→+0.040, 0.15→+0.020, 0.2→+0.021.
 - **Depthwise conv before attention hurts** (+0.012, +0.6GB VRAM). Redundant with full attention.
+- **EMA weight averaging is a significant win** (-0.019 bpb from baseline without EMA). Adaptive decay 0.88→0.95 is optimal. Use `torch._foreach_lerp_` for speed.
+- **SWA (uniform averaging) is much worse than EMA** (+0.028 bpb vs EMA). Exponential weighting is critical.
+- **EMA decay sweep**: 0.85→2.221, 0.9→2.211, 0.92→2.208, 0.93→2.211, 0.95→2.220. Adaptive 0.88→0.95 is best (2.205).
+- **UNEMBEDDING_LR sensitivity persists even with EMA.** 0.01 still +0.031 bpb worse. Fundamental, not noise.
+- **Hyperparameter optima are largely unchanged by EMA.** MATRIX_LR, WARMDOWN_RATIO, FINAL_LR_FRAC all same optima. EMA is orthogonal to training dynamics.
 
 ## Output format
 
