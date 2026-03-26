@@ -464,6 +464,7 @@ USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not 
 # Model size
 DEPTH = 10              # more layers = more transformer capacity
 DEVICE_BATCH_SIZE = 64   # per-device batch size
+EMA_DECAY = 0.95         # exponential moving average decay for weight averaging
 
 # ---------------------------------------------------------------------------
 # Setup: tokenizer, model, optimizer, dataloader
@@ -522,6 +523,9 @@ optimizer = model.setup_optimizer(
 
 model = torch.compile(model, dynamic=False)
 
+# EMA: shadow copy of all parameters for weight averaging
+ema_params = {name: p.clone().detach() for name, p in model.named_parameters()}
+
 train_loader = make_dataloader(tokenizer, DEVICE_BATCH_SIZE, MAX_SEQ_LEN, "train")
 x, y, epoch = next(train_loader)  # prefetch first batch
 
@@ -578,6 +582,11 @@ while True:
     optimizer.step()
     model.zero_grad(set_to_none=True)
 
+    # Update EMA weights
+    with torch.no_grad():
+        for name, p in model.named_parameters():
+            ema_params[name].lerp_(p, 1 - EMA_DECAY)
+
     train_loss_f = train_loss.item()
 
     # Fast fail: abort if loss is exploding or NaN
@@ -620,6 +629,11 @@ while True:
 print()  # newline after \r training log
 
 total_tokens = step * TOTAL_BATCH_SIZE
+
+# Swap in EMA weights for evaluation
+with torch.no_grad():
+    for name, p in model.named_parameters():
+        p.copy_(ema_params[name])
 
 # Final eval
 model.eval()
