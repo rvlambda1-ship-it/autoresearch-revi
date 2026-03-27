@@ -148,17 +148,35 @@ These have been empirically validated across multiple experiments. Do not waste 
 - Run 281: EMBEDDING_LR=1.2 → **2.093** (keep)
 - Run 282: EMBEDDING_LR=1.0 → 2.163 (discard)
 
-**Current best: 2.093 (run 281)** — total improvement: -0.131 from pre-EMA baseline (2.224).
+- Run 283: SCALAR_LR=0.25 → 2.157 (discard)
+- Run 284: FINAL_LR_FRAC=0.15 → **2.085** (keep)
+- Run 285: FINAL_LR_FRAC=0.2 → 2.087 (discard)
+- Run 286: Adaptive EMA 0.85→0.97 → 2.139 (discard)
+- Run 287: WEIGHT_DECAY=0.15 → 2.167 (discard)
+- Run 288: 3x MLP first 3 layers → 2.184 (discard, 212 steps)
+- Run 289: UNEMBEDDING_LR=0.007 → 2.088 (discard)
+- Run 290: Muon momentum warmup 150 → 2.094 (discard)
+- Run 291: EMBEDDING_LR=1.3 → 2.089 (discard)
+- Run 292: lm_head init std 0.01 → 2.179 (discard)
+- Run 293: WARMDOWN_RATIO=0.35 → 2.113 (discard)
+- Run 294: Constant Muon momentum 0.9 → 2.087 (discard)
+- Run 295: MATRIX_LR=0.017 → 2.143 (discard)
+- Run 296: EMBEDDING_LR=1.1 → 2.167 (discard)
+
+**Current best: 2.085 (run 284)** — total improvement: -0.139 from pre-EMA baseline (2.224).
 
 **Key discoveries in this strategy:**
 1. EMA + small batch = massive synergy (-0.030 in first batch reduction)
-2. Batch 2K is optimal (2K→2.162, 4K→2.169, 8K→2.175, 1K→2.256)
-3. MATRIX_LR must be re-tuned: 0.015 optimal at 200+ steps (was 0.02 at 47 steps)
-4. WARMDOWN_RATIO=0.4 optimal at 200+ steps (was 0.3 at 47 steps)
+2. Batch 2K is optimal (2K→2.162, 4K→2.169, 8K→2.175, 1K→2.256, 3K→2.192)
+3. MATRIX_LR=0.015 optimal at 200+ steps (was 0.02 at 47 steps)
+4. WARMDOWN_RATIO=0.4 optimal at 200+ steps (was 0.3)
 5. Muon ns_steps=2 saves compute → more steps → better (was 3)
 6. Skip MLP in last 4 layers (was 3) — more speed, EMA compensates capacity
-7. Linearly decreasing x0_lambda (0.15→0.05) — near-miss before, now works with more steps
-8. EMBEDDING_LR drops from 1.6 to 1.2 at batch 2K
+7. Linearly decreasing x0_lambda (0.15→0.05) — near-miss before, now big win with more steps
+8. EMBEDDING_LR=1.2 optimal at batch 2K (was 1.6)
+9. FINAL_LR_FRAC=0.15 optimal at batch 2K (was 0.1)
+10. DEPTH=11 still dead even at batch 2K (2.297, 137 steps)
+11. All HPs now finely tuned — entering diminishing returns territory
 
 ## Output format
 
