@@ -269,7 +269,7 @@ class GPT(nn.Module):
             if USE_MUON:
                 param_groups.append(dict(
                     kind='muon', params=group_params, lr=matrix_lr,
-                    momentum=0.95, ns_steps=3, beta2=0.95, weight_decay=weight_decay,
+                    momentum=0.95, ns_steps=2, beta2=0.95, weight_decay=weight_decay,
                 ))
             else:
                 param_groups.append(dict(
