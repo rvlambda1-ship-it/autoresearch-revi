@@ -108,9 +108,57 @@ These have been empirically validated across multiple experiments. Do not waste 
 - Run 241: Adaptive EMA 0.88→0.98 → 2.207 (discard)
 - Run 242: WARMDOWN_RATIO=0.4 with EMA → 2.205 (discard)
 - Run 243: Batch 8K + EMA → **2.175** (keep, massive -0.030 improvement)
-- Run 244: Batch 4K + EMA → pending
+- Run 244: Batch 4K + EMA → **2.169** (keep)
+- Run 245: Batch 2K + EMA → **2.162** (keep)
+- Run 246: Batch 1K + EMA → 2.256 (discard, too noisy)
+- Run 247: Batch 3K + EMA → 2.192 (discard)
+- Run 248: MATRIX_LR=0.015 at batch 2K → **2.144** (keep, big win)
+- Run 249: MATRIX_LR=0.01 at batch 2K → 2.207 (discard, too low)
+- Run 250: EMBEDDING_LR=1.2 at batch 2K → 2.209 (discard at that point)
+- Run 251: SCALAR_LR=0.15 at batch 2K → 2.223 (discard)
+- Run 252: WARMDOWN=0.2 at batch 2K → 2.160 (discard)
+- Run 253: WARMDOWN=0.4 at batch 2K → **2.130** (keep)
+- Run 254: WARMDOWN=0.5 at batch 2K → 2.214 (discard)
+- Run 255: FINAL_LR_FRAC=0.05 at batch 2K → 2.139 (discard)
+- Run 256: Adaptive EMA 0.90→0.98 at batch 2K → 2.163 (discard)
+- Run 257: WEIGHT_DECAY=0.05 at batch 2K → 2.130 (discard, tied)
+- Run 258: DEPTH=11 at batch 2K → 2.297 (discard, still too slow)
+- Run 259: WARMUP=0.02 at batch 2K → 2.224 (discard)
+- Run 260: Adam beta2=0.99 at batch 2K → 2.133 (discard)
+- Run 261: Uniform 2x MLP at batch 2K → 2.194 (discard, 176 steps)
+- Run 262: Skip MLP last 4 layers → **2.124** (keep, more speed)
+- Run 263: Skip MLP last 5 layers → 2.165 (discard, too little capacity)
+- Run 264: MATRIX_LR=0.012 at skip-4 → 2.194 (discard)
+- Run 265: UNEMBEDDING_LR=0.006 → 2.128 (discard)
+- Run 266: RoPE base 50000 → 2.135 (discard)
+- Run 267: Parallel attn+MLP → 2.128 (discard)
+- Run 268: EMBEDDING_LR=1.8 → 2.155 (discard)
+- Run 269: GELU activation → 2.192 (discard)
+- Run 270: Muon ns_steps=2 → **2.117** (keep, 232 steps!)
+- Run 271: Muon ns_steps=1 → 2.159 (discard, not enough orthogonalization)
+- Run 272: MATRIX_LR=0.012 at ns_steps=2 → 2.153 (discard)
+- Run 273: HEAD_DIM=32 → 2.169 (discard)
+- Run 274: Uniform 1.5x MLP → 2.177 (discard)
+- Run 275: Muon beta2=0.90 → 2.186 (discard)
+- Run 276: ASPECT_RATIO=56 → 2.146 (discard, 282 steps but too narrow)
+- Run 277: x0_lambda 0.15→0.05 linear → **2.101** (keep, big win!)
+- Run 278: x0_lambda 0.2→0.0 → 2.184 (discard)
+- Run 279: MATRIX_LR=0.018 → 2.102 (discard, tied)
+- Run 280: EMBEDDING_LR=1.4 → **2.098** (keep)
+- Run 281: EMBEDDING_LR=1.2 → **2.093** (keep)
+- Run 282: EMBEDDING_LR=1.0 → 2.163 (discard)
 
-**Current exploration direction**: Batch size reduction sweep, then re-tune hyperparameters at new batch size.
+**Current best: 2.093 (run 281)** — total improvement: -0.131 from pre-EMA baseline (2.224).
+
+**Key discoveries in this strategy:**
+1. EMA + small batch = massive synergy (-0.030 in first batch reduction)
+2. Batch 2K is optimal (2K→2.162, 4K→2.169, 8K→2.175, 1K→2.256)
+3. MATRIX_LR must be re-tuned: 0.015 optimal at 200+ steps (was 0.02 at 47 steps)
+4. WARMDOWN_RATIO=0.4 optimal at 200+ steps (was 0.3 at 47 steps)
+5. Muon ns_steps=2 saves compute → more steps → better (was 3)
+6. Skip MLP in last 4 layers (was 3) — more speed, EMA compensates capacity
+7. Linearly decreasing x0_lambda (0.15→0.05) — near-miss before, now works with more steps
+8. EMBEDDING_LR drops from 1.6 to 1.2 at batch 2K
 
 ## Output format
 
