@@ -264,7 +264,7 @@ class GPT(nn.Module):
             dict(kind='adamw', params=x0_params, lr=scalar_lr, betas=(0.96, 0.95), eps=1e-10, weight_decay=0.0),
         ]
         # Per-layer learning rate decay: deeper layers get lower LR for stability
-        layer_decay_factor = 0.5
+        layer_decay_factor = 0.15
         n_layers = self.config.n_layer
         for layer_idx, block in enumerate(self.transformer.h):
             layer_lr_mult = 1.0 - layer_decay_factor * (layer_idx / max(n_layers - 1, 1))
