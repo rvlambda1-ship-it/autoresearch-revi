@@ -650,7 +650,8 @@ with autocast_ctx:
     print("[DEBUG] Inside autocast context, calling evaluate_bpb...", flush=True)
     torch.cuda.synchronize()
     print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
-    val_bpb = evaluate_bpb(model, tokenizer, DEVICE_BATCH_SIZE)
+    eval_batch_size = min(64, DEVICE_BATCH_SIZE * 8)  # Increase batch size for faster eval
+    val_bpb = evaluate_bpb(model, tokenizer, eval_batch_size)
     print("[DEBUG] evaluate_bpb returned", flush=True)
 
 # Final summary
