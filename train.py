@@ -631,18 +631,27 @@ while True:
         break
 
 print()  # newline after \r training log
+print("[DEBUG] Training complete, entering evaluation phase", flush=True)
 
 total_tokens = step * TOTAL_BATCH_SIZE
 
 # Swap in EMA weights for evaluation
+print("[DEBUG] Swapping EMA weights...", flush=True)
 with torch.no_grad():
     for p, ema_p in zip(model.parameters(), ema_params):
         p.copy_(ema_p)
+print("[DEBUG] EMA swap complete", flush=True)
 
 # Final eval
+print("[DEBUG] Setting model to eval mode...", flush=True)
 model.eval()
+print("[DEBUG] Model eval mode set, starting evaluation...", flush=True)
 with autocast_ctx:
+    print("[DEBUG] Inside autocast context, calling evaluate_bpb...", flush=True)
+    torch.cuda.synchronize()
+    print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
     val_bpb = evaluate_bpb(model, tokenizer, DEVICE_BATCH_SIZE)
+    print("[DEBUG] evaluate_bpb returned", flush=True)
 
 # Final summary
 t_end = time.time()
