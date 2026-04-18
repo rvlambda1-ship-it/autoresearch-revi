@@ -248,11 +248,14 @@ class GPT(nn.Module):
     def setup_optimizer(self, unembedding_lr=0.004, embedding_lr=0.2, matrix_lr=0.02,
                         weight_decay=0.0, adam_betas=(0.8, 0.95), scalar_lr=0.5):
         model_dim = self.config.n_embd
+        matrix_params = list(self.transformer.h.parameters())
         value_embeds_params = list(self.value_embeds.parameters())
         embedding_params = list(self.transformer.wte.parameters())
         lm_head_params = list(self.lm_head.parameters())
         resid_params = [self.resid_lambdas]
         x0_params = [self.x0_lambdas]
+        assert len(list(self.parameters())) == (len(matrix_params) + len(embedding_params) +
+            len(lm_head_params) + len(value_embeds_params) + len(resid_params) + len(x0_params))
         # Scale LR ∝ 1/√dmodel (tuned at 768 dim), capped at 1.0 for small models
         dmodel_lr_scale = min(1.0, (model_dim / 768) ** -0.5)
         print(f"Scaling AdamW LRs by 1/sqrt({model_dim}/768) = {dmodel_lr_scale:.6f}")
@@ -263,29 +266,18 @@ class GPT(nn.Module):
             dict(kind='adamw', params=resid_params, lr=scalar_lr * 0.01, betas=adam_betas, eps=1e-10, weight_decay=0.0),
             dict(kind='adamw', params=x0_params, lr=scalar_lr, betas=(0.96, 0.95), eps=1e-10, weight_decay=0.0),
         ]
-        # Per-layer learning rate decay: deeper layers get lower LR for stability
-        layer_decay_factor = 0.15
-        n_layers = self.config.n_layer
-        for layer_idx, block in enumerate(self.transformer.h):
-            layer_lr_mult = 1.0 - layer_decay_factor * (layer_idx / max(n_layers - 1, 1))
-            layer_params = list(block.parameters())
-            layer_shapes = sorted({p.shape for p in layer_params})
-            for shape in layer_shapes:
-                layer_shape_params = [p for p in layer_params if p.shape == shape]
-                layer_matrix_lr = matrix_lr * layer_lr_mult
-                if USE_MUON:
-                    param_groups.append(dict(
-                        kind='muon', params=layer_shape_params, lr=layer_matrix_lr,
-                        momentum=0.95, ns_steps=2, beta2=0.95, weight_decay=weight_decay,
-                    ))
-                else:
-                    param_groups.append(dict(
-                        kind='adamw', params=layer_shape_params, lr=layer_matrix_lr,
-                        betas=adam_betas, eps=1e-10, weight_decay=weight_decay,
-                    ))
-        matrix_params = list(self.transformer.h.parameters())
-        assert len(list(self.parameters())) == (len(matrix_params) + len(embedding_params) +
-            len(lm_head_params) + len(value_embeds_params) + len(resid_params) + len(x0_params))
+        for shape in sorted({p.shape for p in matrix_params}):
+            group_params = [p for p in matrix_params if p.shape == shape]
+            if USE_MUON:
+                param_groups.append(dict(
+                    kind='muon', params=group_params, lr=matrix_lr,
+                    momentum=0.95, ns_steps=2, beta2=0.95, weight_decay=weight_decay,
+                ))
+            else:
+                param_groups.append(dict(
+                    kind='adamw', params=group_params, lr=matrix_lr,
+                    betas=adam_betas, eps=1e-10, weight_decay=weight_decay,
+                ))
         optimizer = MuonAdamW(param_groups)
         for group in optimizer.param_groups:
             group["initial_lr"] = group["lr"]
@@ -466,7 +458,7 @@ MATRIX_LR = 0.015       # learning rate for matrix parameters (Muon) - lower for
 SCALAR_LR = 0.2         # higher LR for few-param per-layer scalars
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
-WARMUP_RATIO = 0.0      # zero warmup: grad clip protects initial steps
+WARMUP_RATIO = 0.005    # near-zero warmup: maximize steps at peak LR
 WARMDOWN_RATIO = 0.4    # longer warmdown for deeper LR decay
 FINAL_LR_FRAC = 0.15    # slightly higher final LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
@@ -589,6 +581,7 @@ while True:
         if group['kind'] == 'muon':
             group["momentum"] = muon_momentum
             group["weight_decay"] = muon_weight_decay
+    torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
     optimizer.step()
     model.zero_grad(set_to_none=True)
 
