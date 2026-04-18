@@ -103,8 +103,8 @@ class CausalSelfAttention(nn.Module):
 class MLP(nn.Module):
     def __init__(self, config, layer_idx=0):
         super().__init__()
-        # Tapered MLP: 2x in first 3 layers, 1x in rest
-        ratio = 2.0 if layer_idx < 3 else 1.0
+        # Tapered MLP: 1.5x in first 4 layers, 1x in rest (smoother capacity taper)
+        ratio = 1.5 if layer_idx < 4 else 1.0
         hidden = int(ratio * config.n_embd)
         self.c_fc = nn.Linear(config.n_embd, hidden, bias=False)
         self.c_proj = nn.Linear(hidden, config.n_embd, bias=False)
@@ -319,7 +319,7 @@ polar_express_coeffs = [
 ]
 
 @torch.compile(dynamic=False, fullgraph=True)
-def adamw_step_fused(p, grad, exp_avg, exp_avg_sq, step_t, lr_t, beta1_t, beta2_t, eps_t, wd_t):
+def adamw_step_fused(p, grad, exp_avg, exp_avg_sq, step_t, lr_t, beta1_t, beta2_t, eps_t, wd_t):  # r305
     p.mul_(1 - lr_t * wd_t)
     exp_avg.lerp_(grad, 1 - beta1_t)
     exp_avg_sq.lerp_(grad.square(), 1 - beta2_t)
