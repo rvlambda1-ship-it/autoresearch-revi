@@ -78,6 +78,10 @@ These have been empirically validated across multiple experiments. Do not waste 
 - **Hyperparameter optima are largely unchanged by EMA.** MATRIX_LR, WARMDOWN_RATIO, FINAL_LR_FRAC all same optima. EMA is orthogonal to training dynamics.
 - **Smaller batch + EMA is a massive win.** Batch 8K (DEVICE=32, TOTAL=2^13) with adaptive EMA gave 2.175 vs 2.205 (-0.030 bpb). 80 steps vs 47, only 1.7GB VRAM. EMA smooths gradient noise from smaller batches while more optimizer steps give more learning. This is the single biggest improvement since the initial architecture was set up.
 - **EMBEDDING_LR sweet spot was 1.6 at batch 16K.** May need re-tuning at smaller batch sizes — more steps means different effective LR dynamics.
+
+## Fixed Issues
+
+- **Evaluation phase hang (runs 306-307)**: Model evaluation was hanging indefinitely, preventing val_bpb from being calculated. Root cause: missing CUDA synchronization before calling `evaluate_bpb()`. Solution: Added `torch.cuda.synchronize()` before the evaluate_bpb() call in train.py (run 308). This ensures all pending GPU operations complete before starting evaluation, allowing the evaluation phase to proceed normally. Fix confirmed working in run 308.
 - **Previous batch size tests (pre-EMA) failed.** Run 58 (batch 8K, 2.389), run 119 (batch 8K, 2.275) — both much worse. EMA is what makes small batches viable.
 
 ## Strategy: EMA + small batch synergy (current, runs 221+)
