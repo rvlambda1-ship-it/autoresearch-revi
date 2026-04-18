@@ -523,7 +523,8 @@ optimizer = model.setup_optimizer(
     weight_decay=WEIGHT_DECAY,
 )
 
-model = torch.compile(model, dynamic=False)
+# Disabled: torch.compile(model) causes eval mode inference to hang
+# model = torch.compile(model, dynamic=False)
 
 # EMA: flat list of shadow parameters for fast foreach update
 ema_params = [p.clone().detach() for p in model.parameters()]
