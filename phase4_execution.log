@@ -1,1 +1,15 @@
 Waiting for background run 345 to complete...
+Run 345 (DEPTH=8): 2.016154
+=== Launching run 346 (DEPTH=10) ===
+warning: LF will be replaced by CRLF in results.tsv.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in train.py.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in phase4_cascade.sh.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in phase4_execution.log.
+The file will have its original line endings in your working directory
+[autoresearch/mar16 3f0159d] Run 346: DEPTH=10 (Phase 4)
+ 4 files changed, 109 insertions(+), 1 deletion(-)
+ create mode 100644 phase4_cascade.sh
+ create mode 100644 phase4_execution.log
