@@ -297,3 +297,9 @@ ba45ula2o	0.0	0.0	crash	Run 330: Reached step 107/~260 (42.4%), sustained 1.19s/
 0879a99	2.196567	1.4	discard	Run 336: MLP ratio 1.4x (worse than 1.5x baseline)
 c46b6b5	2.221767	1.4	discard	Run 337: MLP ratio 1.6x (worse than 1.5x baseline)
 2208f29	2.102663	1.4	discard	Run 338: MLP ratio 1.7x (worse than 1.5x baseline)
+3b0b8ca	2.096720	1.4	discard	Run 339: EMBEDDING_LR 1.1 (worse than baseline 1.2)
+2c10a38	2.102809	1.4	discard	Run 340: EMBEDDING_LR 1.3
+2c10a38	2.102760	1.4	discard	Run 341: SCALAR_LR 0.15
+2c10a38	2.101578	1.4	discard	Run 342: SCALAR_LR 0.25
+2c10a38	2.104800	1.4	discard	Run 343: EMA_DECAY 0.90
+2c10a38	2.114764	1.4	discard	Run 344: EMA_DECAY 0.94
