@@ -103,8 +103,8 @@ class CausalSelfAttention(nn.Module):
 class MLP(nn.Module):
     def __init__(self, config, layer_idx=0):
         super().__init__()
-        # Tapered MLP: 1.5x in first 4 layers, 1x in rest (smoother capacity taper)
-        ratio = 1.5 if layer_idx < 4 else 1.0
+        # Tapered MLP: 1.4x in first 4 layers, 1x in rest (conservative ratio)
+        ratio = 1.4 if layer_idx < 4 else 1.0
         hidden = int(ratio * config.n_embd)
         self.c_fc = nn.Linear(config.n_embd, hidden, bias=False)
         self.c_proj = nn.Linear(hidden, config.n_embd, bias=False)
