@@ -464,7 +464,7 @@ FINAL_LR_FRAC = 0.15    # slightly higher final LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 9               # reduced from 10 for faster training (10% speedup needed for timeout)
+DEPTH = 10              # more layers = more transformer capacity
 DEVICE_BATCH_SIZE = 16   # per-device batch size (2K tokens, doubled for better GPU util)
 EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
@@ -650,7 +650,7 @@ with autocast_ctx:
     print("[DEBUG] Inside autocast context, calling evaluate_bpb...", flush=True)
     torch.cuda.synchronize()
     print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
-    eval_batch_size = 128  # Larger batch size to speed up evaluation
+    eval_batch_size = 64   # Reduced from 128 to ease GPU memory pressure during eval
     # Monkeypatch prepare.EVAL_TOKENS to reduce eval from 2.6M to 250K tokens (~50 steps, very fast)
     import prepare
     original_eval_tokens = prepare.EVAL_TOKENS
