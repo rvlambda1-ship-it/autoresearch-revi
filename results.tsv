@@ -318,3 +318,4 @@ ec5f607	1.817527	1.0	keep	Run 352: DEPTH=3 - NEW BEST! (1.818, +0.7% vs 1.830)
 7a2d576	1.812980	1.1	keep	Run 354: Phase 5 - MLP at all layers (+0.2% vs pure attn)
 667d928	1.815836	1.1	discard	Run 355: MLP 1.25x - worse than 1.5x
 3108967	1.843979	1.1	keep	Run 360: DEPTH=3 baseline with 25K eval tokens (OOM resolved)
+1a5aa3c	1.845933	1.1	discard	Run 361: MLP 1.75x - tied with 1.5x, confirms pure-attention optimal
