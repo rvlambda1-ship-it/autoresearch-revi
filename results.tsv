@@ -294,3 +294,5 @@ ba45ula2o	0.0	0.0	crash	Run 330: Reached step 107/~260 (42.4%), sustained 1.19s/
 9806daf	2.058646	1.4	keep	Run 333: Skip MLP in last 3 layers (356 steps, +0.056 improvement over baseline)
 9659f27	2.066134	1.4	keep	Run 334: Skip MLP in last 5 layers (332 steps, slightly worse than skip-3)
 745f5fc	2.097976	1.4	discard	Run 335: Skip MLP in last 2 layers (worse than skip-3)
+0879a99	2.196567	1.4	discard	Run 336: MLP ratio 1.4x (worse than 1.5x baseline)
+c46b6b5	2.221767	1.4	discard	Run 337: MLP ratio 1.6x (worse than 1.5x baseline)
