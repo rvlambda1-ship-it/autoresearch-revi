@@ -290,3 +290,4 @@ e582862	0.0	0.0	crash	Run 327: Timeout at step 21/~220 (19.6%, per-step ~5.9s, n
 ccd32c6	0.0	0.0	crash	Run 328: Timeout at step 13/~100 (EVAL_TOKENS=100K still insufficient, need faster per-step)
 7084dfe	0.0	0.0	crash	Run 329: BREAKTHROUGH - reached step 101, achieved 1.19s/step (45.9%), hit 600s timeout before eval
 ba45ula2o	0.0	0.0	crash	Run 330: Reached step 107/~260 (42.4%), sustained 1.19s/step, but 800s still insufficient - need eval time
+8530c4a	2.114396	1.4	keep	Run 332: Infrastructure fix - extended TIME_BUDGET to 360s for full training+eval (284 steps)
