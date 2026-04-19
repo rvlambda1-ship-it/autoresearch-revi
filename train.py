@@ -104,7 +104,7 @@ class MLP(nn.Module):
     def __init__(self, config, layer_idx=0):
         super().__init__()
         # Tapered MLP: 1.5x in first 4 layers, 1x in rest (optimal from run 333)
-        ratio = 1.75
+        ratio = 1.5
         hidden = int(ratio * config.n_embd)
         self.c_fc = nn.Linear(config.n_embd, hidden, bias=False)
         self.c_proj = nn.Linear(hidden, config.n_embd, bias=False)
@@ -120,7 +120,7 @@ class Block(nn.Module):
     def __init__(self, config, layer_idx):
         super().__init__()
         self.attn = CausalSelfAttention(config, layer_idx)
-        self.has_mlp = True  # enable MLP at all layers for DEPTH=3  # skip MLP in last 3 layers (optimal from run 333)
+        self.has_mlp = layer_idx < config.n_layer - 3  # enable MLP at all layers for DEPTH=3  # skip MLP in last 3 layers (optimal from run 333)
         if self.has_mlp:
             self.mlp = MLP(config, layer_idx)
 
