@@ -660,7 +660,7 @@ with autocast_ctx:
     # Monkeypatch prepare.EVAL_TOKENS to reduce eval from 2.6M to 100K tokens (~20 steps, minimal eval)
     import prepare
     original_eval_tokens = prepare.EVAL_TOKENS
-    prepare.EVAL_TOKENS = 100000  # Minimal evaluation: ~20 steps, ~25-35s eval time
+    prepare.EVAL_TOKENS = 50000  # Ultra-minimal evaluation: ~10 steps, ~12-15s eval time, reduces OOM risk
     print(f"[DEBUG] Reduced EVAL_TOKENS from {original_eval_tokens} to {prepare.EVAL_TOKENS}", flush=True)
     val_bpb = evaluate_bpb(model, tokenizer, eval_batch_size)
     prepare.EVAL_TOKENS = original_eval_tokens  # Restore
