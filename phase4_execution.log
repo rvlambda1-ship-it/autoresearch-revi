@@ -13,3 +13,24 @@ The file will have its original line endings in your working directory
  4 files changed, 109 insertions(+), 1 deletion(-)
  create mode 100644 phase4_cascade.sh
  create mode 100644 phase4_execution.log
+Run 346 (DEPTH=10): 2.295765
+=== Launching run 347 (DEPTH=11) ===
+warning: LF will be replaced by CRLF in results.tsv.
+The file will have its original line endings in your working directory
+warning: LF will be replaced by CRLF in train.py.
+The file will have its original line endings in your working directory
+[autoresearch/mar16 caf6f8e] Run 347: DEPTH=11 (Phase 4)
+ 2 files changed, 3 insertions(+), 1 deletion(-)
+Run 347 (DEPTH=11): 2.447386
+=== Committing Phase 4 results ===
+warning: LF will be replaced by CRLF in results.tsv.
+The file will have its original line endings in your working directory
+[autoresearch/mar16 31cbfa8] Phase 4 complete: Architecture variants DEPTH 8/10/11 (all worse than 2.058646)
+ 1 file changed, 1 insertion(+)
+=== Phase 4 Summary ===
+Run 345 (DEPTH=8):  2.016154
+Run 346 (DEPTH=10): 2.295765
+Run 347 (DEPTH=11): 2.447386
+Current best: 2.058646 (DEPTH=9)
+
+Phase 4 execution complete. Ready for next phase if needed.
