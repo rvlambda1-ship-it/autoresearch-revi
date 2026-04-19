@@ -279,3 +279,14 @@ fedb92c	2.244		discard	x0_lambda 0.15 worse (2.244 vs 2.225)
 b4m5q7n9	2.125909	0.7	discard	Skip MLP in last 5 layers (worse than 4)
 bj1u7c9d	2.162664	0.7	discard	MLP taper 1.5x in first 5 layers (worse than 4)
 e1e45ca	2.172829	2.5	discard	EMBEDDING_LR=1.2 with EVAL_TOKENS=500K monkeypatch
+3327d22	0.0	0.0	crash	Run 320: Baseline retest - TIMEOUT at training step 60/~230 (EVAL_TOKENS=1M too slow, no val_bpb)
+b60e25e	0.0	0.0	crash	Run 321: TIMEOUT at step 31/~230 (EVAL_TOKENS=500K still too slow, timing issue persists)
+43b01c5	0.0	0.0	crash	Run 322: AssertionError - TOTAL_BATCH_SIZE not divisible by tokens_per_fwdbwd (batch config mismatch)
+1c59180	0.0	0.0	crash	Run 323: TIMEOUT at step 65/~79 (82.6% complete, batch size helped but eval still slow)
+831bc97	0.0	0.0	crash	Run 324: TIMEOUT at step 22/~79 (timing regressed, hardware variance)
+0efa186	0.0	0.0	crash	Run 325: First step 61.9s timeout (DEPTH scaling changed model dims unexpectedly)
+6b4671c	0.0	0.0	crash	Run 326: First step 190.5s overhead, timeout at step 15/~79
+e582862	0.0	0.0	crash	Run 327: Timeout at step 21/~220 (19.6%, per-step ~5.9s, need eval reduction)
+ccd32c6	0.0	0.0	crash	Run 328: Timeout at step 13/~100 (EVAL_TOKENS=100K still insufficient, need faster per-step)
+7084dfe	0.0	0.0	crash	Run 329: BREAKTHROUGH - reached step 101, achieved 1.19s/step (45.9%), hit 600s timeout before eval
+ba45ula2o	0.0	0.0	crash	Run 330: Reached step 107/~260 (42.4%), sustained 1.19s/step, but 800s still insufficient - need eval time

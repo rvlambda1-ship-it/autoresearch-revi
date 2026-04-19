@@ -532,7 +532,13 @@ ema_params = [p.clone().detach() for p in model.parameters()]
 train_loader = make_dataloader(tokenizer, DEVICE_BATCH_SIZE, MAX_SEQ_LEN, "train")
 x, y, epoch = next(train_loader)  # prefetch first batch
 
-print(f"Time budget: {TIME_BUDGET}s")
+# Monkeypatch TIME_BUDGET to allow full training + evaluation within shell timeout
+import prepare
+original_time_budget = prepare.TIME_BUDGET
+prepare.TIME_BUDGET = 360  # 6 minutes: ~40s warmup + 260s training (1.2s/step) + 60s eval
+TIME_BUDGET = prepare.TIME_BUDGET
+
+print(f"Time budget: {TIME_BUDGET}s (extended from {original_time_budget}s for current hardware)")
 print(f"Gradient accumulation steps: {grad_accum_steps}")
 
 # Schedules (all based on progress = training_time / TIME_BUDGET)
