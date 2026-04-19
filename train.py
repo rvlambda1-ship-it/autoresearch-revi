@@ -464,7 +464,7 @@ FINAL_LR_FRAC = 0.15    # slightly higher final LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 10              # more layers = more transformer capacity
+DEPTH = 9               # reduced to fit hardware constraints (10->9 provides ~11% speedup)
 DEVICE_BATCH_SIZE = 16   # per-device batch size (2K tokens, doubled for better GPU util)
 EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
