@@ -307,3 +307,4 @@ c46b6b5	2.221767	1.4	discard	Run 337: MLP ratio 1.6x (worse than 1.5x baseline)
 845f059	2.016154	1.2	keep	Run 345: DEPTH=8 - BREAKTHROUGH improvement (2.059->2.016, +2.1%)
 845f059	2.295765	1.4	discard	Run 346: DEPTH=10
 0379b9a	2.295765	1.4	discard	Run 346: DEPTH=10 - much worse (deeper is bad)
+845f059	2.447386	1.4	discard	Run 347: DEPTH=11
