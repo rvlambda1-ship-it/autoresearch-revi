@@ -303,3 +303,4 @@ c46b6b5	2.221767	1.4	discard	Run 337: MLP ratio 1.6x (worse than 1.5x baseline)
 2c10a38	2.101578	1.4	discard	Run 342: SCALAR_LR 0.25
 2c10a38	2.104800	1.4	discard	Run 343: EMA_DECAY 0.90
 2c10a38	2.114764	1.4	discard	Run 344: EMA_DECAY 0.94
+845f059	2.016154	1.4	discard	Run 345: DEPTH=8

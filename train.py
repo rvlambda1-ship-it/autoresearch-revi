@@ -464,7 +464,7 @@ FINAL_LR_FRAC = 0.15    # slightly higher final LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 8               # Phase 4: test shallower variant
+DEPTH = 10
 DEVICE_BATCH_SIZE = 8    # per-device batch size (smaller might reduce per-step overhead)
 EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
