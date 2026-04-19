@@ -19,5 +19,5 @@ AGENTS.md
 # Experimental code/artifacts
 dev/
 
-# Results file
-results.tsv
+# Results file - NOW TRACKED IN GIT to prevent data loss
+# results.tsv
