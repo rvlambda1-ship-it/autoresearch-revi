@@ -452,7 +452,7 @@ WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
 TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
-EMBEDDING_LR = 1.2      # current best (tested 1.6 in run 315/316, timed out)
+EMBEDDING_LR = 1.1      # test lower variant (current best is 1.2)
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
 MATRIX_LR = 0.015       # learning rate for matrix parameters (Muon) - lower for more steps
 SCALAR_LR = 0.2         # higher LR for few-param per-layer scalars
