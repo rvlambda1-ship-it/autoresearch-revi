@@ -21,3 +21,4 @@ dev/
 
 # Results file - NOW TRACKED IN GIT to prevent data loss
 # results.tsv
+run_*.log
