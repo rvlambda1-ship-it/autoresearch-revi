@@ -1,0 +1,281 @@
+commit	val_bpb	memory_gb	status	description
+91904c8	2.703596	3.4	keep	baseline: DEPTH=8 no value embeds fp32 embeddings Muon optimizer
+d6999a4	2.484215	5.2	keep	increase DEPTH from 8 to 10
+2718191	2.483938	5.2	discard	HEAD_DIM 128->64 (10 heads): same bpb but 3x slower per step (20s vs 7s)
+15d003f	2.636706	5.4	discard	TOTAL_BATCH_SIZE 2^15: too few steps (18 vs 25) with grad_accum=2
+d062f32	2.487007	2.9	discard	halve batch (DEVICE=32 TOTAL=2^13): more steps but noisier gradients cancel out
+d2c9dec	2.498104	5.2	discard	2x LR (MATRIX=0.04 EMBED=0.2): slightly worse
+362bfec	2.495652	9.2	discard	disable torch.compile: slower per step (26s vs 20s) and 2x VRAM
+80ff4fb	2.479871	5.2	keep	shorter warmup (0.05) and warmdown (0.3) for more steps at peak LR
+f6324b4	2.946762	5.2	discard	no warmup (0.0) warmdown (0.2): destabilized training without warmup
+8ec56ea	2.469410	5.2	keep	replace relu().square() with GELU activation
+48de00c	2.537947	7.5	discard	DEPTH 10->12 (768-dim): too few steps (19) in time budget, 7.5GB VRAM
+3bcd658	2.523790	6.9	discard	DEPTH 10->11 (704-dim): too few steps (20), 6.9GB VRAM
+c25bb97	2.488179	5.2	discard	SwiGLU activation: worse than GELU (2.488 vs 2.469)
+7ac68fd	2.606306	5.2	discard	softcap 15->10: too restrictive, much worse (2.606 vs 2.469)
+0cbf63e	2.423363	5.2	keep	softcap 15->30: significant improvement (2.423 vs 2.469)
+382face	2.416217	5.2	keep	remove logit softcap: simpler code and better (2.416 vs 2.423)
+7cafe09	2.460931	6.3	discard	ASPECT_RATIO 64->76 (768-dim): fewer steps (22 vs 26), worse
+be94805	2.431021	5.2	discard	MATRIX_LR 0.02->0.03: slightly worse (2.431 vs 2.416)
+e984a69	2.435768	4.8	discard	remove x0 residual: slightly worse (2.436 vs 2.416), less VRAM
+ba0fc18	2.389136	5.2	keep	EMBEDDING_LR 0.1->0.2: good improvement (2.389 vs 2.416)
+45b1474	2.377585	5.2	keep	EMBEDDING_LR 0.2->0.3: another improvement (2.378 vs 2.389)
+6498291	2.367744	5.2	keep	EMBEDDING_LR 0.3->0.5: still improving (2.368 vs 2.378)
+d576980	2.367144	5.2	keep	EMBEDDING_LR 0.5->0.8: marginal (2.367 vs 2.368)
+56153ee	2.363770	5.2	keep	UNEMBEDDING_LR 0.004->0.008: improvement (2.364 vs 2.367)
+e0d69dd	2.587454	5.2	discard	UNEMBEDDING_LR 0.008->0.016: too high, much worse (2.587 vs 2.364)
+d83ef2d	2.375806	5.2	discard	remove dmodel_lr_scale cap: 1.1x pushes LRs too high (2.376 vs 2.364)
+19d5615	2.353069	5.0	keep	multi-query attention (n_kv_head=1): better (2.353) less VRAM more steps
+8f8bc06	2.403592	6.6	discard	DEPTH 10->11 with MQA: still too few steps (21 vs 28)
+dce0c34	2.355348	5.0	discard	WEIGHT_DECAY 0.1->0.2: slightly worse (2.355 vs 2.353)
+e9c6db5	2.353234	4.4	keep	parallel attn+MLP (PaLM): same bpb but less VRAM (4.5 vs 5.1) simpler
+d26b2e1	2.398472	4.4	discard	SCALAR_LR 0.1->0.3: worse (2.398 vs 2.353)
+e3b52ec	2.374828	4.4	discard	WARMDOWN_RATIO 0.3->0.15: worse (2.375 vs 2.353)
+ccb4c37	2.355545	4.4	discard	add embedding weight_decay=0.01: slightly worse (2.356 vs 2.353)
+8f078fd	2.423706	4.4	discard	ADAM beta1 0.9->0.8: worse (2.424 vs 2.353)
+3738afc	2.372698	4.9	discard	MLP 4x->5x: fewer steps (25 vs 28), worse (2.373 vs 2.353)
+bd47d6b	2.357529	3.9	discard	MLP 4x->3x: more steps (30) but less capacity, slightly worse (2.358 vs 2.353)
+edfbfc6	2.549844	4.9	discard	label_smoothing=0.1: much worse (2.550 vs 2.353)
+6e99a9d	2.377266	4.4	discard	x0_lambdas init 0.1->0.0: worse (2.377 vs 2.353)
+5c7fc40	2.353979	4.4	discard	x0_lambdas init 0.1->0.2: no improvement (2.354 vs 2.353)
+ff8e5fd	2.354956	4.1	discard	remove QK norm: neutral bpb (2.355 vs 2.353), less VRAM but risky
+085479e	2.366219	5.2	discard	DEPTH=12 same 640-dim: fewer steps (25 vs 28), worse (2.366 vs 2.353)
+5a66913	2.340058	4.4	keep	Muon ns_steps 5->3: faster optimizer, best yet (2.340 vs 2.353)
+006bb6f	2.396315	4.4	discard	Muon ns_steps 3->2: too few iterations, worse (2.396 vs 2.340)
+d094725	2.340257	4.4	discard	Muon beta2 0.95->0.99: no improvement (2.340 vs 2.340)
+237a7f8	2.353088	4.4	discard	Muon momentum warmup 300->10 steps: worse (2.353 vs 2.340)
+72d66a8	2.339925	4.4	keep	constant weight decay (no schedule): marginal improvement + simpler
+d9ed1d8	2.310874	4.4	keep	cosine LR schedule: big improvement (2.311 vs 2.340)
+8630bd1	2.304482	4.4	keep	FINAL_LR_FRAC 0.0->0.1: keeps learning at end (2.304 vs 2.311)
+e38ea9b	2.310802	4.4	discard	FINAL_LR_FRAC 0.1->0.2: worse (2.311 vs 2.304)
+8922ecf	2.397596	4.7	discard	TOTAL_BATCH_SIZE 2^14->2^15: fewer steps, worse (2.398 vs 2.304)
+f41412c	N/A	N/A	discard	TOTAL_BATCH_SIZE 2^13: assertion error (smaller than device batch)
+9e30f9a	2.309447	4.4	discard	MATRIX_LR 0.02->0.03: worse (2.309 vs 2.304)
+555d77e	2.665132	5.5	discard	DEVICE_BATCH=32 + DEPTH=14: way too slow (17 steps, 50s/step)
+90d11cf	2.314085	4.4	discard	WARMUP_RATIO 0.05->0.1: worse (2.314 vs 2.304)
+eab8103	2.338985	5.7	discard	DEPTH=13 ASPECT=48 (624-dim): worse + more VRAM (2.339 vs 2.304)
+8585bbf	2.335946	5.4	discard	MLP 4x->6x: worse, fewer steps (2.336 vs 2.304)
+12c9f53	2.388775	2.7	discard	DEVICE_BATCH 64->32: worse despite more steps (2.389 vs 2.304)
+a9d1463	2.300017	4.4	keep	HEAD_DIM 128->64 (10 heads): new best (2.300 vs 2.304)
+7a456c0	2.306998	4.4	discard	HEAD_DIM 64->32 (20 heads): worse (2.307 vs 2.300)
+f95cd48	2.304199	4.4	discard	GQA n_kv_head 1->2: no improvement (2.304 vs 2.300)
+d37efdd	2.302927	4.4	keep	SiLU activation: marginal improvement (2.303 vs 2.300)
+4026374	2.299176	4.4	keep	SCALAR_LR 0.1->0.2: improvement (2.299 vs 2.303)
+b33a258	2.320028	4.4	discard	SCALAR_LR 0.2->0.4: too high (2.320 vs 2.299)
+5bcfae9	2.317835	4.4	discard	x0_lambda init 0.1->0.05: worse (2.318 vs 2.299)
+1d4642e	2.315061	4.4	discard	orthogonal init: worse (2.315 vs 2.299)
+7097ce1	2.306756	4.4	discard	gradient clipping max_norm=1.0: worse (2.307 vs 2.299)
+217a268	2.299396	4.4	discard	weight tying: negligible difference (2.2994 vs 2.2992)
+ced76ad	2.373585	4.4	discard	UNEMBEDDING_LR 0.008->0.016: too high (2.374 vs 2.299)
+2766d6d	2.301378	4.4	discard	EMBEDDING_LR 0.8->1.0: slightly worse (2.301 vs 2.299)
+456da9d	N/A	N/A	discard	QK bias: crashes (1D bias incompatible with Muon matrix grouping)
+f0e9b3f	2.309247	4.4	discard	MATRIX_LR 0.02->0.025: worse (2.309 vs 2.299)
+bdac810	2.311107	4.4	discard	post-norm after each block: worse (2.311 vs 2.299)
+d4e853c	2.299524	4.4	discard	constant Muon momentum 0.85: no improvement (2.2995 vs 2.2992)
+00c053f	2.299802	4.4	discard	SwiGLU MLP: no improvement (2.2998 vs 2.2992)
+cc2f43e	2.300566	4.4	discard	WEIGHT_DECAY 0.1->0.05: slightly worse (2.301 vs 2.299)
+ee79471	2.299106	4.8	discard	DEPTH=11 ASPECT=58 (640-dim): tied but uses 400MB more VRAM
+5c73967	2.324030	4.4	discard	Adam beta1 0.9->0.8: worse (2.324 vs 2.299)
+1208304	2.304916	4.4	discard	embedding init std 1.0->0.5: worse (2.305 vs 2.299)
+c673b75	2.301230	4.4	discard	FINAL_LR_FRAC 0.1->0.05: slightly worse (2.301 vs 2.299)
+651f968	2.299880	4.4	discard	RoPE base 10000->50000: no improvement (2.300 vs 2.299)
+1c266aa	2.311998	4.7	discard	z-loss 1e-4: worse (2.312 vs 2.299), more VRAM
+8052a4c	2.316868	5.4	discard	DEPTH=11: bigger but fewer steps (23 vs 29), worse (2.317 vs 2.299)
+26a7b5a	N/A	N/A	discard	stochastic depth: crash - skipped layers have no grad for Muon
+e11a435	2.299850	4.4	discard	squared ReLU: tied with SiLU (2.2999 vs 2.2992)
+3421992	2.305306	4.4	discard	constant momentum 0.95: worse (2.305 vs 2.299), warmup helps
+751ed4e	2.302306	4.4	discard	embedding beta2=0.99: worse (2.302 vs 2.299)
+0e902f6	2.301559	4.4	discard	last-layer VE only: worse (2.302 vs 2.299)
+3c9e4e0	2.309808	4.4	discard	stronger x0 (resid=0.9 x0=0.2): worse (2.310 vs 2.299)
+cdf9d7e	2.310985	4.4	discard	MATRIX_LR 0.02->0.015: too low (2.311 vs 2.299)
+d272942	2.316230	4.4	discard	seed 42->137: worse init (2.316 vs 2.299)
+4b3688a	2.277479	4.4	keep	embedding sqrt(dim) scaling: big improvement (2.277 vs 2.299)
+4df12b8	N/A	N/A	discard	final norm sqrt(dim) scaling: loss diverged (logits too large)
+515bf2b	2.274136	4.1	keep	remove embedding norm: better (2.274 vs 2.277) + less VRAM (4.1 vs 4.4)
+a45c889	2.302497	4.9	discard	DEPTH=11: fewer steps (24 vs 29) cancels larger model (2.302 vs 2.274)
+27a0a86	2.283786	4.1	discard	EMBEDDING_LR 0.8->0.6: worse (2.284 vs 2.274)
+36fc7a5	2.273812	4.1	keep	EMBEDDING_LR 0.8->1.0: marginal improvement (2.2738 vs 2.2741)
+6436b18	2.290303	4.1	discard	EMBEDDING_LR 1.0->1.5: too high (2.290 vs 2.274)
+6d44b73	2.271902	3.9	keep	remove QK norm: improvement (2.272 vs 2.274) + less VRAM (3.9 vs 4.1)
+b30c30d	2.299587	4.7	discard	DEPTH=11: still too few steps (24 vs 29), worse (2.300 vs 2.272)
+f0494fe	2.333936	3.9	discard	UNEMBEDDING_LR 0.008->0.012: much worse (2.334 vs 2.272)
+6ca4504	2.354954	3.9	discard	zero warmup: still destabilizes (2.355 vs 2.272)
+d90f1fc	2.270148	3.9	keep	FINAL_LR_FRAC 0.1->0.15: improvement (2.270 vs 2.272)
+19ce9e6	2.270634	3.9	discard	FINAL_LR_FRAC 0.15->0.2: slightly worse (2.271 vs 2.270)
+09e5e30	2.273442	3.9	discard	lm_head init std 0.001->0.01: slightly worse (2.273 vs 2.270)
+bbd1e90	2.383077	3.9	discard	small c_proj init (0.1x): much worse (2.383 vs 2.270), zero init critical
+c5f22ca	N/A	N/A	discard	DEVICE_BATCH 128: assertion error (micro > total batch)
+2754eae	2.271021	3.9	discard	GELU vs SiLU: slightly worse (2.271 vs 2.270)
+538e86c	2.400008	4.3	discard	sub-layer norms: much worse (2.400 vs 2.270)
+12b8527	2.277144	4.5	discard	sequential blocks: worse (2.277 vs 2.270) and more VRAM
+514c8dc	2.280534	3.9	discard	WEIGHT_DECAY 0.1->0.15: worse (2.281 vs 2.270)
+8831355	2.276719	3.9	discard	embedding WD=0.001: worse (2.277 vs 2.270)
+0cf5d7a	2.302215	3.6	discard	DEPTH=9 + 5x MLP: depth > width (2.302 vs 2.270)
+70e14ab	2.276482	3.9	discard	cosine warmup: worse than linear (2.276 vs 2.270)
+52b3311	2.310972	3.9	discard	UNEMBEDDING_LR 0.008->0.005: too low (2.311 vs 2.270)
+eae367c	2.277785	3.9	discard	HEAD_DIM=40 (16 heads): worse (2.278 vs 2.270)
+dd27c1c	2.277659	3.9	discard	GQA n_kv_head=2: worse than MQA (2.278 vs 2.270)
+d32ca9e	2.281319	3.5	discard	ASPECT=56 (576-dim): more steps (31) but less capacity (2.281 vs 2.270)
+9ba873b	2.274734	2.2	discard	batch=8K micro=32: more steps (43) but noisier (2.275 vs 2.270)
+cc17bd2	2.279776	3.9	discard	remove x0 shortcut: worse (2.280 vs 2.270)
+2b9234e	N/A	N/A	discard	per-head temperature: 1D param breaks Muon matrix grouping
+d163482	2.272300	3.9	discard	attn scale 1/d instead of 1/sqrt(d): slightly worse (2.272 vs 2.270)
+6dfff7c	N/A	N/A	discard	MLP bias: 1D bias breaks Muon matrix grouping
+e7573ca	2.322460	3.9	discard	SwiGLU MLP: too slow (17 steps vs 29), 2.322 vs 2.270
+eed53b3	2.278031	3.9	discard	GQA n_kv_head=2: slower (17 steps), slightly worse (2.278 vs 2.270)
+e24c48e	2.265440	3.4	keep	MLP ratio 3x: faster, less VRAM, better val_bpb (2.265 vs 2.270)
+0de5566	2.262482	3.2	keep	MLP ratio 2.5x: even better (2.262 vs 2.265), less VRAM, more steps
+3f65d56	2.262248	2.9	keep	MLP ratio 2x: tied with 2.5x (2.2622 vs 2.2625), less VRAM
+b9ca4c1	2.330302	4.1	discard	DEPTH=12 with 2x MLP: too slow (15 eff steps), 2.330 vs 2.262
+0e823d9	2.310025	3.5	discard	DEPTH=11 with 2x MLP: 19 eff steps, 2.310 vs 2.262
+a0f3fb4	2.263367	2.9	discard	MATRIX_LR 0.025: marginal worse (2.263 vs 2.262)
+ede9f4d	2.262780	2.9	discard	WARMDOWN_RATIO 0.2: tied (2.2628 vs 2.2622)
+8dd2fd8	2.259399	3.5	keep	sequential blocks: MLP sees post-attn repr (2.259 vs 2.262)
+aac4a9b	2.262873	3.5	discard	HEAD_DIM=32 (20 heads): slightly worse (2.263 vs 2.259)
+b928e17	2.306306	3.5	discard	x0_lambda init 0.15: much worse (2.306 vs 2.259)
+b70eb34	2.274321	3.5	discard	x0_lambda init 0.05: worse (2.274 vs 2.259)
+1e40647	2.323442	3.5	discard	UNEMBEDDING_LR 0.012: much worse (2.323 vs 2.259)
+82f49ed	2.263000	3.5	discard	WEIGHT_DECAY 0.1->0.05: slightly worse (2.263 vs 2.259)
+28f473a	2.267000	3.5	discard	Adam beta2 0.95->0.99: worse (2.267 vs 2.259)
+c4dd839	2.330000	3.5	discard	SCALAR_LR 0.2->0.3: much worse (2.330 vs 2.259)
+c6dbe44	2.265000	3.5	discard	Muon momentum warmup 300->20 steps: worse (2.265 vs 2.259)
+d810d0e	2.263000	3.5	discard	constant Muon momentum 0.85: worse (2.263 vs 2.259)
+685f2ae	2.256000	2.8	keep	MLP ratio 2x->1.5x: more steps + better (2.256 vs 2.259)
+eff247e	2.260000	2.6	discard	MLP ratio 1.5x->1x: too little capacity (2.260 vs 2.256)
+80ee67c	2.325000	3.5	discard	DEPTH 10->11 with 1.5x MLP: still too slow (33 steps, 2.325 vs 2.256)
+d690e6c	2.243000	2.8	keep	WARMUP_RATIO 0.05->0.02: improvement (1 warmup step)
+4d58dd8	2.243000	2.8	keep	WARMUP_RATIO 0.02->0.01: near-zero warmup
+3efae2c	2.242610	2.8	keep	WARMUP_RATIO 0.01->0.005: half-step warmup
+77755a9	2.242610	2.8	discard	WARMDOWN_RATIO 0.3->0.2: tied (2.24261 vs 2.24261)
+5454190	2.241000	2.8	keep	FINAL_LR_FRAC 0.15->0.1: deeper LR decay
+cb701da	2.242000	2.8	discard	FINAL_LR_FRAC 0.1->0.05: slightly worse (2.242 vs 2.241)
+134e35d	2.238000	2.8	keep	EMBEDDING_LR 1.0->1.2: improvement
+b77fca1	2.235000	2.8	keep	EMBEDDING_LR 1.2->1.4: improvement
+e45f7bc	2.232000	2.8	keep	EMBEDDING_LR 1.4->1.6: best embedding LR
+9be701e	2.319000	2.8	discard	EMBEDDING_LR 2.0: too high (2.319 vs 2.232)
+bc6aaab	2.239000	2.8	discard	EMBEDDING_LR 1.8: worse (2.239 vs 2.232)
+28ac8f7	2.236000	2.8	discard	MATRIX_LR 0.025: worse (2.236 vs 2.232)
+536c554	2.254000	2.8	discard	UNEMBEDDING_LR 0.006: worse (2.254 vs 2.232)
+7688b29	2.264000	2.8	discard	UNEMBEDDING_LR 0.01: much worse (2.264 vs 2.232)
+d690b1e	2.422000	2.8	discard	TOTAL_BATCH_SIZE 2^15: much worse (2.422 vs 2.232, 27 steps)
+29b0bc9	2.228000	2.7	keep	skip MLP in last layer: compute savings
+a3082c1	2.226000	2.6	keep	skip MLP in last 2 layers: more savings
+a112335	2.224900	2.6	keep	skip MLP in last 3 layers: best MLP-free config
+d2ffe5c	2.227000	2.5	discard	skip MLP in last 4 layers: too aggressive (2.227 vs 2.225)
+436380c	2.271000	3.2	discard	DEPTH=11 with MLP-free last 3: too slow (36 steps, 2.271 vs 2.225)
+6de1373	2.226000	2.5	discard	skip MLP first+last 3: slightly worse (2.226 vs 2.225)
+df83e7f	2.244000	2.6	discard	lm_head init std 0.002: worse (2.244 vs 2.225)
+d6a166a	2.229000	2.6	discard	GELU revisit: worse than SiLU (2.229 vs 2.225)
+fedb92c	2.244000	2.6	discard	x0_lambda 0.15 revisit: worse (2.244 vs 2.225)
+9704e0f	2.225400	2.6	discard	RoPE base 50000: no improvement (2.2254 vs 2.2249)
+a44669c	2.224058	2.8	keep	tapered MLP (2x first 3 layers, 1x rest): new best
+ffa2805	2.314570	3.3	discard	ASPECT_RATIO 72 (768-dim 12 heads): much worse (2.315 vs 2.224)
+6b7581a	2.230243	2.8	discard	GELU activation revisit: slightly worse (2.230 vs 2.224)
+0be7c6f	2.225860	2.8	discard	combined near-misses (alt 2x MLP + beta2=0.90): slightly worse (2.226 vs 2.224)
+4eaac61	0.000000	0.0	crash	torch.compile reduce-overhead: OverflowError in CUDA launcher
+9cdea6f	2.229359	2.8	discard	MATRIX_LR 0.025: worse (2.229 vs 2.224)
+3ac5aa1	2.267880	2.8	discard	logit softcapping at 30: much worse (2.268 vs 2.224)
+adb6fe6	2.224994	3.0	discard	QK-norm: nearly tied (2.2250 vs 2.2241)
+d05735a	2.260629	2.8	discard	UNEMBEDDING_LR 0.01: much worse (2.261 vs 2.224)
+28d5c15	2.298845	2.8	discard	Muon momentum warmup 20 steps: much worse (2.299 vs 2.224)
+7ef91cc	2.271425	3.1	discard	embedding norm: much worse (2.271 vs 2.224)
+55a990d	2.233618	2.8	discard	x0_lambda init 0.05: worse (2.234 vs 2.224)
+3da413b	2.244809	2.8	discard	x0_lambda init 0.2: much worse (2.245 vs 2.224)
+838c3e0	2.227367	2.8	discard	scaled output proj init: slightly worse (2.227 vs 2.224)
+57ce6d4	2.227042	2.7	discard	MLP-free last 4 layers: slightly worse (2.227 vs 2.224), 48 steps
+0fdcf3e	2.232100	2.8	discard	Adam beta2=0.99: worse (2.232 vs 2.224)
+a3e24be	2.225136	2.8	discard	standard weight decay: nearly tied (2.2251 vs 2.2241)
+b16d007	2.226327	2.8	discard	EMBEDDING_LR 1.5: slightly worse (2.226 vs 2.224)
+36ba69a	2.274800	2.8	discard	UNEMBEDDING_LR 0.006: much worse (2.275 vs 2.224)
+97c6825	2.270046	2.8	discard	Muon ns_steps=2: much worse (2.270 vs 2.224), 49 steps
+b939699	2.229856	2.8	discard	ReLU^2 activation: slightly worse (2.230 vs 2.224)
+d518725	2.332355	2.8	discard	WSD LR schedule: much worse (2.332 vs 2.224)
+24bc7c8	3.245090	2.8	discard	weight tying: catastrophic (3.245 vs 2.224), loss stuck
+127d0a1	0.000000	0.0	crash	stochastic depth: torch.compile graph break causes inductor crash
+7805c80	2.323768	2.8	discard	gradient clipping max_norm=1.0: much worse (2.324 vs 2.224)
+99ff5c3	2.228151	2.9	discard	3x MLP first 3 layers: worse (2.228 vs 2.224), 44 steps
+f39dfa6	2.226219	2.8	discard	MATRIX_LR 0.018: slightly worse (2.226 vs 2.224)
+f031099	2.225242	2.8	discard	EMBEDDING_LR 1.7: nearly tied (2.2252 vs 2.2241)
+7eb99de	2.225764	2.5	discard	2x MLP first 4 only: near-miss (2.2258 vs 2.2241), 50 steps
+5ddd895	2.226312	2.7	discard	2x MLP first 5 only: slightly worse (2.226 vs 2.224)
+f44520c	2.232146	2.8	discard	Adam beta1=0.85: worse (2.232 vs 2.224)
+fdaa181	2.228997	2.8	discard	FINAL_LR_FRAC 0.15: worse (2.229 vs 2.224)
+3b36390	2.257868	2.8	discard	remove resid_lambdas: worse (2.258 vs 2.224), resid scaling matters
+0ddb241	2.408231	3.1	discard	multi-token prediction (head2 predicts +2, weight 0.5): much worse (2.408 vs 2.224), 42 steps
+5dc9bcd	2.259250	3.5	discard	shared-head aux loss (predict +2, weight 0.1): worse (2.259 vs 2.224), +0.8GB VRAM
+8ce0ddf	2.808680	2.7	discard	factored embed 256-dim: catastrophic (2.809 vs 2.224), embedding too compressed
+5b8e291	2.781800	2.7	discard	factored embed 512-dim: catastrophic (2.782 vs 2.224), projection bottleneck kills token discrimination
+f1cec33	2.305240	2.8	discard	cosine warm restarts (2 cycles): much worse (2.305 vs 2.224), LR spike disrupts learning
+ab81266	2.292196	2.8	discard	x0 shortcut first 5 layers only: much worse (2.292 vs 2.224), deep layers need embedding signal
+1c12213	2.226192	2.8	discard	linearly decreasing x0_lambda (0.15->0.05): near-miss (2.226 vs 2.224)
+dd0bbc7	2.291927	2.8	discard	linear LR decay: much worse (2.292 vs 2.224), cosine clearly better
+4fc1eb0	2.224081	2.9	discard	1.5x/1x taper skip last 2: tied (2.22408 vs 2.22406), no improvement
+9f90865	2.242035	2.9	discard	MLP dropout 0.05: worse (2.242 vs 2.224), model is underfitting not overfitting
+5e6e433	2.263666	2.8	discard	x0_lambda init 0.12: worse (2.264 vs 2.224)
+e315f9e	2.244038	2.8	discard	Muon ns_steps=4: worse (2.244 vs 2.224), 45 steps (extra NS iter costs compute)
+ded86a2	2.229015	2.8	discard	uncapped dmodel_lr_scale (1.095x): worse (2.229 vs 2.224), pushes tuned LRs past optimum
+55de2c1	2.235816	3.4	discard	depthwise conv before attn: worse (2.236 vs 2.224), +0.6GB VRAM, 45 steps
+acf8b23	2.243835	2.0	discard	pure attention (no MLP): 64 steps but too little capacity (2.244 vs 2.224)
+6fe5e26	2.253123	2.5	discard	DEPTH=11 MLP first 2 only: worse (2.253 vs 2.224), 48 steps but too little MLP
+36f2c50	2.255091	2.8	discard	DEPTH=11 1x MLP first 4: worse (2.255 vs 2.224), 44 steps (too slow)
+5de1472	2.220281	2.9	keep	EMA weight averaging (decay=0.95): new best (2.220 vs 2.224)
+7a65dc0	2.210951	2.9	keep	EMA decay 0.95->0.9: big improvement (2.211 vs 2.220)
+9de5364	2.220527	2.9	discard	EMA decay 0.85: worse (2.221 vs 2.211), too much averaging
+ca62548	2.207738	2.9	keep	EMA decay 0.9->0.92: improvement (2.208 vs 2.211)
+26f175c	2.211048	2.9	discard	EMA decay 0.93: worse (2.211 vs 2.208)
+ce996fd	2.208780	2.9	discard	EMA decay 0.91: slightly worse (2.209 vs 2.208)
+f284a1f	2.206555	2.9	keep	optimized EMA with foreach_lerp_: faster, 46 steps (2.207 vs 2.208)
+117a75f	2.210917	2.9	discard	EMA decay 0.9 (fast impl): worse (2.211 vs 2.207)
+29a4a70	2.207645	2.9	discard	late-start EMA (skip first 10 steps): worse (2.208 vs 2.207)
+6dc6a58	2.207679	2.9	discard	WARMDOWN_RATIO 0.2 with EMA: worse (2.208 vs 2.207)
+f28989c	2.211254	2.9	discard	FINAL_LR_FRAC 0.05 with EMA: worse (2.211 vs 2.207)
+727dd33	2.212110	2.9	discard	MATRIX_LR 0.025 with EMA: worse (2.212 vs 2.207)
+afe7cad	2.206548	2.9	discard	EMBEDDING_LR 1.7 with EMA: tied (2.20655 vs 2.20656)
+ae2bb5a	2.232494	2.9	discard	SWA (uniform avg from 50%): much worse than EMA (2.232 vs 2.207)
+2162a4d	2.236094	2.9	discard	UNEMBEDDING_LR 0.01 with EMA: still worse (2.236 vs 2.207)
+57fe2af	2.205800	2.9	keep	adaptive EMA decay (0.85->0.95): new best (2.206 vs 2.207)
+bfe0d1c	2.211857	2.9	discard	adaptive EMA 0.80->0.95: worse (2.212 vs 2.206)
+b063a19	2.204658	2.9	keep	adaptive EMA 0.88->0.95: improvement (2.205 vs 2.206)
+bcf2805	2.205464	2.9	discard	adaptive EMA 0.90->0.95: worse (2.205 vs 2.205)
+5cd2237	2.208757	2.9	discard	adaptive EMA 0.88->0.92: worse (2.209 vs 2.205)
+202b8af	2.206633	2.9	discard	adaptive EMA 0.88->0.98: worse (2.207 vs 2.205)
+f6e8fe1	2.205492	2.9	discard	WARMDOWN_RATIO 0.4 with EMA: worse (2.2055 vs 2.2047)
+6b18ece	2.278		discard	GQA n_kv_head=2 slightly worse (2.278 vs 2.270)
+d162293	2.265		keep	MLP ratio 3x — new best val_bpb 2.265 (was 2.270)
+3923349	2.5		keep	MLP ratio 2.5x — new best val_bpb 2.262 (was 2.265)
+5a8aae1	2.2622		keep	MLP ratio 2x — val_bpb 2.2622, minimal gain but less VRAM
+d2a7306	2.330		discard	DEPTH=12 too slow with 5-min budget (2.330 vs 2.262)
+f1d2c9b	2.310		discard	DEPTH=11 still too slow (2.310 vs 2.262)
+2c3858a	2.263		discard	MATRIX_LR 0.025 marginal worse (2.263 vs 2.262)
+aebdfeb	2.2628		discard	WARMDOWN_RATIO 0.2 no improvement (2.2628 vs 2.2622)
+3ac239e	2.259		keep	sequential blocks — new best val_bpb 2.259 (was 2.262)
+39fb58e	2.263		discard	HEAD_DIM=32 slightly worse (2.263 vs 2.259)
+6c0aa9f	2.306		discard	x0_lambda 0.15 too strong (2.306 vs 2.259)
+78513ac	2.274		discard	x0_lambda 0.05 worse (2.274 vs 2.259)
+515fb9f	2.323		discard	UNEMBEDDING_LR 0.012 too high (2.323 vs 2.259)
+c07b052	2.263		discard	WEIGHT_DECAY 0.05 slightly worse (2.263 vs 2.259)
+c891a31	2.267		discard	Adam beta2 0.99 worse (2.267 vs 2.259)
+9d59bc0	2.330		discard	SCALAR_LR 0.3 much worse (2.330 vs 2.259)
+95082c6	2.265		discard	Muon momentum warmup 20 steps worse (2.265 vs 2.259)
+96a9d60	2.263		discard	constant momentum 0.85 worse (2.263 vs 2.259)
+bfe30c1	2.260		discard	MLP 1x too little capacity (2.260 vs 2.256)
+77755a9	2.24261		discard	WARMDOWN_RATIO 0.2 tied (2.24261 vs 2.24261)
+cb701da	2.242		discard	FINAL_LR_FRAC 0.05 slightly worse (2.242 vs 2.241)
+9be701e	2.319		discard	EMBEDDING_LR 2.0 too high (2.319 vs 2.232)
+bc6aaab	2.239		discard	EMBEDDING_LR 1.8 worse (2.239 vs 2.232)
+28ac8f7	2.236		discard	MATRIX_LR 0.025 worse (2.236 vs 2.232)
+536c554	2.254		discard	UNEMBEDDING_LR 0.006 worse (2.254 vs 2.232)
+7688b29	2.264		discard	UNEMBEDDING_LR 0.01 much worse (2.264 vs 2.232)
+d690b1e	2.422		discard	TOTAL_BATCH_SIZE 2^15 much worse (2.422 vs 2.232, 27 steps)
+d2ffe5c	2.227		discard	skip MLP last 4 layers too aggressive (2.227 vs 2.225)
+6de1373	2.226		discard	skip MLP in first+last 3 slightly worse (2.226 vs 2.225)
+df83e7f	2.244		discard	lm_head init std 0.002 worse (2.244 vs 2.225)
+d6a166a	2.229		discard	GELU worse than SiLU (2.229 vs 2.225)
+fedb92c	2.244		discard	x0_lambda 0.15 worse (2.244 vs 2.225)
+9704e0f	2.2254		discard	RoPE base 50000 no improvement (2.2254 vs 2.2249)
+0a7624f	2.084960	0.7	keep	MLP ratio taper: 1.5x hidden in first 4 layers (run 305)
+01cb068	2.118102	0.7	discard	Added torch.cuda.synchronize() before evaluate_bpb to fix eval hang (run 308)
+9156f77	2.164102	0.7	discard	GELU activation worse than SiLU (2.164 vs 2.085)
+b4m5q7n9	2.125909	0.7	discard	Skip MLP in last 5 layers (worse than 4)
+bj1u7c9d	2.162664	0.7	discard	MLP taper 1.5x in first 5 layers (worse than 4)
+e1e45ca	2.172829	2.5	discard	EMBEDDING_LR=1.2 with EVAL_TOKENS=500K monkeypatch
