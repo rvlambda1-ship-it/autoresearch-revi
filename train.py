@@ -651,10 +651,10 @@ with autocast_ctx:
     torch.cuda.synchronize()
     print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
     eval_batch_size = 64   # Reduced from 128 to ease GPU memory pressure during eval
-    # Monkeypatch prepare.EVAL_TOKENS to reduce eval from 2.6M to 250K tokens (~50 steps, very fast)
+    # Monkeypatch prepare.EVAL_TOKENS to reduce eval from 2.6M to 100K tokens (~20 steps, minimal eval)
     import prepare
     original_eval_tokens = prepare.EVAL_TOKENS
-    prepare.EVAL_TOKENS = 250000  # Very fast evaluation: ~50 steps, ~40-50s eval time
+    prepare.EVAL_TOKENS = 100000  # Minimal evaluation: ~20 steps, ~25-35s eval time
     print(f"[DEBUG] Reduced EVAL_TOKENS from {original_eval_tokens} to {prepare.EVAL_TOKENS}", flush=True)
     val_bpb = evaluate_bpb(model, tokenizer, eval_batch_size)
     prepare.EVAL_TOKENS = original_eval_tokens  # Restore
