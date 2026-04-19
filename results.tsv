@@ -310,3 +310,4 @@ c46b6b5	2.221767	1.4	discard	Run 337: MLP ratio 1.6x (worse than 1.5x baseline)
 845f059	2.447386	1.4	discard	Run 347: DEPTH=11
 da323ed	2.447386	1.4	discard	Run 347: DEPTH=11 - even worse
 5848db3	1.966880	1.2	keep	Run 348: DEPTH=7 - NEW BEST! (1.967, +3.9% vs 2.016)
+87b0b33	1.906494	1.2	keep	Run 349: DEPTH=6 - NEW BEST! (1.906, +3.0% vs 1.967)
