@@ -316,3 +316,4 @@ bac3169	1.830068	1.1	keep	Run 351: DEPTH=4 - NEW BEST! (1.830, +1.7% vs 1.869)
 ec5f607	1.817527	1.0	keep	Run 352: DEPTH=3 - NEW BEST! (1.818, +0.7% vs 1.830)
 8adbb25	1.832167	0.9	discard	Run 353: DEPTH=2 - DEGRADATION (1.832 vs 1.818), capacity limit hit
 7a2d576	1.812980	1.1	keep	Run 354: Phase 5 - MLP at all layers (+0.2% vs pure attn)
+667d928	1.815836	1.1	discard	Run 355: MLP 1.25x - worse than 1.5x
