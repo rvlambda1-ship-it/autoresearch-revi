@@ -452,7 +452,7 @@ WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
 TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (keep pushing smaller)
-EMBEDDING_LR = 1.6      # documented sweet spot (was 1.2)
+EMBEDDING_LR = 1.2      # current best (tested 1.6 in run 315/316, timed out)
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
 MATRIX_LR = 0.015       # learning rate for matrix parameters (Muon) - lower for more steps
 SCALAR_LR = 0.2         # higher LR for few-param per-layer scalars
@@ -650,7 +650,7 @@ with autocast_ctx:
     print("[DEBUG] Inside autocast context, calling evaluate_bpb...", flush=True)
     torch.cuda.synchronize()
     print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
-    eval_batch_size = min(64, DEVICE_BATCH_SIZE * 8)  # Increase batch size for faster eval
+    eval_batch_size = 128  # Larger batch size to speed up evaluation: reduces steps to ~80
     val_bpb = evaluate_bpb(model, tokenizer, eval_batch_size)
     print("[DEBUG] evaluate_bpb returned", flush=True)
 
