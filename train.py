@@ -650,8 +650,14 @@ with autocast_ctx:
     print("[DEBUG] Inside autocast context, calling evaluate_bpb...", flush=True)
     torch.cuda.synchronize()
     print("[DEBUG] CUDA synchronized, calling evaluate_bpb...", flush=True)
-    eval_batch_size = 128  # Larger batch size to speed up evaluation: reduces steps to ~80
+    eval_batch_size = 128  # Larger batch size to speed up evaluation
+    # Monkeypatch prepare.EVAL_TOKENS to reduce eval from 2.6M to 0.5M tokens (~100 steps)
+    import prepare
+    original_eval_tokens = prepare.EVAL_TOKENS
+    prepare.EVAL_TOKENS = 500000  # Reduced evaluation: ~100 steps instead of 320
+    print(f"[DEBUG] Reduced EVAL_TOKENS from {original_eval_tokens} to {prepare.EVAL_TOKENS}", flush=True)
     val_bpb = evaluate_bpb(model, tokenizer, eval_batch_size)
+    prepare.EVAL_TOKENS = original_eval_tokens  # Restore
     print("[DEBUG] evaluate_bpb returned", flush=True)
 
 # Final summary
