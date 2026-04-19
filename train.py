@@ -120,7 +120,7 @@ class Block(nn.Module):
     def __init__(self, config, layer_idx):
         super().__init__()
         self.attn = CausalSelfAttention(config, layer_idx)
-        self.has_mlp = layer_idx < config.n_layer - 3  # skip MLP in last 3 layers (optimal from run 333)
+        self.has_mlp = True  # enable MLP at all layers for DEPTH=3  # skip MLP in last 3 layers (optimal from run 333)
         if self.has_mlp:
             self.mlp = MLP(config, layer_idx)
 
