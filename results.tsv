@@ -3,3 +3,6 @@ b70d30b	1.843161	1119.9	3495	keep	Phase 2 Run 1: DEPTH=3 baseline (worse than ru
 45f1853	1.845918	1119.9	3688	discard	Run 14: UNEMBEDDING_LR=0.006 (worse, +0.0117)
 c69819f	1.847652	1119.9	3688	discard	Run 15: UNEMBEDDING_LR=0.010 (worse, +0.0135)
 5f34eb7	1.838754	1119.9	3688	keep	Run 16: UNEMBEDDING_LR=0.008 baseline (confirmed optimal)
+eb83ccc	1.843263	1119.9	3688	discard	Run 17: EMA_DECAY=0.88 (worse, +0.0091)
+3a8f24d	1.838421	1119.9	3688	discard	Run 18: EMA_DECAY=0.95 (worse, +0.0042)
+fbba30c	1.836545	1119.9	3688	discard	Run 19: EMA_DECAY=0.92 baseline (no improvement vs Phase 2 best)
