@@ -446,27 +446,27 @@ class MuonAdamW(torch.optim.Optimizer):
 # ---------------------------------------------------------------------------
 
 # Model architecture
-ASPECT_RATIO = 64       # DIM = DEPTH * ASPECT_RATIO, then round to HEAD_DIM boundary
-HEAD_DIM = 128          # Phase 1: 128 (matches DEPTH=3 -> 768-dim)
-WINDOW_PATTERN = "L"    # full attention only
+ASPECT_RATIO = 64       # model_dim = depth * ASPECT_RATIO
+HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attention
+WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
-# Optimization (Phase 1 best config from research_context.md)
-TOTAL_BATCH_SIZE = 2048         # 2K tokens/step, optimal at ~200+ steps in Phase 1
-EMBEDDING_LR = 1.2              # Phase 1 best
-UNEMBEDDING_LR = 0.008          # Phase 1 best (EXTREMELY sensitive)
-MATRIX_LR = 0.015               # Phase 1 best
-SCALAR_LR = 0.20                # Phase 1 settled
-WEIGHT_DECAY = 0.1              # Muon weight decay
-ADAM_BETAS = (0.9, 0.95)        # Standard
-WARMUP_RATIO = 0.05             # Phase 1: 5% warmup
-WARMDOWN_RATIO = 0.40           # Phase 1: 40% warmdown
-FINAL_LR_FRAC = 0.15            # Phase 1: 15% final LR
-USE_MUON = True                 # Phase 1: Muon optimizer
+# Optimization
+TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
+EMBEDDING_LR = 1.2      # CONFIRMED BEST from run 352
+UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
+MATRIX_LR = 0.015       # learning rate for matrix parameters (Muon) - lower for more steps
+SCALAR_LR = 0.2         # current best (revert for run 339 EMBEDDING_LR test)
+WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
+ADAM_BETAS = (0.9, 0.95) # Adam betas
+WARMUP_RATIO = 0.005    # near-zero warmup: maximize steps at peak LR
+WARMDOWN_RATIO = 0.4    # longer warmdown for deeper LR decay
+FINAL_LR_FRAC = 0.15    # slightly higher final LR
+USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 3                        # Phase 1 best: DEPTH=3
-DEVICE_BATCH_SIZE = 8           # 8 * 2048 seq = 16384 tokens/device/step
-EMA_DECAY = 0.92                # Adaptive: will use 0.88->0.95 schedule in code
+DEPTH = 3
+DEVICE_BATCH_SIZE = 8    # per-device batch size (smaller might reduce per-step overhead)
+EMA_DECAY = 0.92         # exponential moving average decay for weight averaging
 
 # ---------------------------------------------------------------------------
 # Setup: tokenizer, model, optimizer, dataloader
