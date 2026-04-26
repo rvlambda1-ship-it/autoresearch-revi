@@ -1,2 +1,5 @@
 commit	val_bpb	peak_vram_mb	num_steps	status	description
 b70d30b	1.843161	1119.9	3495	keep	Phase 2 Run 1: DEPTH=3 baseline (worse than run 352: 1.843 vs 1.818)
+acf7798	1.851809	1119.9	3688	discard	Run 20: SCALAR_LR=0.15 (worse, +0.0176)
+e5a7e5b	1.834878	1119.9	3688	keep	Run 21: SCALAR_LR=0.25 (tie, -0.0007)
+4f38b15	1.833844	1119.9	3688	keep	Run 22: SCALAR_LR=0.2 baseline (tie, -0.0004)
