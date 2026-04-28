@@ -104,7 +104,7 @@ class MLP(nn.Module):
     def __init__(self, config, layer_idx=0):
         super().__init__()
         # Tapered MLP: 1.5x in first 4 layers, 1x in rest (optimal from run 333)
-        ratio = 1.52
+        ratio = 1.5
         hidden = int(ratio * config.n_embd)
         self.c_fc = nn.Linear(config.n_embd, hidden, bias=False)
         self.c_proj = nn.Linear(hidden, config.n_embd, bias=False)
@@ -446,7 +446,7 @@ class MuonAdamW(torch.optim.Optimizer):
 # ---------------------------------------------------------------------------
 
 # Model architecture
-ASPECT_RATIO = 64       # model_dim = depth * ASPECT_RATIO
+ASPECT_RATIO = 60       # model_dim = depth * ASPECT_RATIO
 HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attention
 WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
