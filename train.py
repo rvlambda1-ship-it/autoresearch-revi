@@ -452,9 +452,9 @@ WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
 TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
-EMBEDDING_LR = 1.3      # Testing for ASPECT_RATIO=60 new configuration
+EMBEDDING_LR = 1.2      # Back to optimal for ASPECT_RATIO=60
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
-MATRIX_LR = 0.015       # learning rate for matrix parameters (Muon) - lower for more steps
+MATRIX_LR = 0.014       # Testing lower value for more training steps
 SCALAR_LR = 0.2         # current best (revert for run 339 EMBEDDING_LR test)
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
