@@ -447,7 +447,7 @@ class MuonAdamW(torch.optim.Optimizer):
 
 # Model architecture
 ASPECT_RATIO = 61       # model_dim = depth * ASPECT_RATIO
-HEAD_DIM = 60           # smaller heads = more heads (10 vs 5) for richer attention
+HEAD_DIM = 90           # smaller heads = more heads (10 vs 5) for richer attention
 WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
 # Optimization
