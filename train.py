@@ -446,7 +446,7 @@ class MuonAdamW(torch.optim.Optimizer):
 # ---------------------------------------------------------------------------
 
 # Model architecture
-ASPECT_RATIO = 61       # model_dim = depth * ASPECT_RATIO
+ASPECT_RATIO = 60       # model_dim = depth * ASPECT_RATIO (optimal from Run 30)
 HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attention
 WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 
@@ -454,13 +454,13 @@ WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
 EMBEDDING_LR = 1.2      # Back to optimal for ASPECT_RATIO=60
 UNEMBEDDING_LR = 0.008  # learning rate for lm_head (Adam)
-MATRIX_LR = 0.014       # Testing lower value for more training steps
+MATRIX_LR = 0.015       # Optimal value from Run 30
 SCALAR_LR = 0.2         # current best (revert for run 339 EMBEDDING_LR test)
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
 WARMUP_RATIO = 0.005    # near-zero warmup: maximize steps at peak LR
-WARMDOWN_RATIO = 0.28   # testing below 0.3 optimum
-FINAL_LR_FRAC = 0.15    # slightly higher final LR
+WARMDOWN_RATIO = 0.3    # optimal from Run 40
+FINAL_LR_FRAC = 0.12    # testing lower final LR fraction
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
