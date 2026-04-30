@@ -455,7 +455,7 @@ TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
 EMBEDDING_LR = 1.2      # Back to optimal for ASPECT_RATIO=60
 UNEMBEDDING_LR = 0.008  # revert to baseline
 MATRIX_LR = 0.015       # Optimal value from Run 30
-SCALAR_LR = 0.25        # testing slightly higher for scalars
+SCALAR_LR = 0.15        # testing lower for scalars
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
 WARMUP_RATIO = 0.005    # near-zero warmup: maximize steps at peak LR
