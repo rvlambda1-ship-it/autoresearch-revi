@@ -453,7 +453,7 @@ WINDOW_PATTERN = "L"    # full attention only (recommended for small GPUs)
 # Optimization
 TOTAL_BATCH_SIZE = 2**11 # ~2K tokens per optimizer step (back to original)
 EMBEDDING_LR = 1.2      # Back to optimal for ASPECT_RATIO=60
-UNEMBEDDING_LR = 0.010  # testing slightly higher for lm_head (Adam)
+UNEMBEDDING_LR = 0.006  # testing lower for lm_head (Adam)
 MATRIX_LR = 0.015       # Optimal value from Run 30
 SCALAR_LR = 0.2         # current best (revert for run 339 EMBEDDING_LR test)
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
