@@ -28,3 +28,4 @@ f4048cc	1.839733	1119.9	3941	discard	Run 47: FINAL_LR_FRAC=0.16 (still regressio
 b793188	1.838268	1119.9	3924	discard	Run 48: UNEMBEDDING_LR=0.010 (regression)
 52489a7	1.838074	1119.9	4011	discard	Run 49: UNEMBEDDING_LR=0.006 (regression)
 04068ce	1.843527	1119.9	3907	discard	Run 50: SCALAR_LR=0.25 (regression)
+74a0d50	1.844203	1119.9	3885	discard	Run 51: SCALAR_LR=0.15 (regression)
