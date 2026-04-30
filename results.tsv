@@ -24,3 +24,4 @@ db7ddfa	1.826542	1119.9	3688	discard	Run 39: MATRIX_LR=0.014 (slightly worse tha
 7344b13	1.826342	1119.9	3688	discard	Run 44: WARMDOWN_RATIO=0.28 (worse than 0.3)
 97ebcc3	1.838927	1119.9	3626	discard	Run 45: FINAL_LR_FRAC=0.12 (too aggressive decay)
 24482d3	1.838498	1119.9	3771	discard	Run 46: FINAL_LR_FRAC=0.14 (still regression)
+f4048cc	1.839733	1119.9	3941	discard	Run 47: FINAL_LR_FRAC=0.16 (still regression)
