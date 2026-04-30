@@ -446,7 +446,7 @@ class MuonAdamW(torch.optim.Optimizer):
 # ---------------------------------------------------------------------------
 
 # Model architecture
-ASPECT_RATIO = 60       # model_dim = depth * ASPECT_RATIO (optimal from Run 30)
+ASPECT_RATIO = 58       # testing slightly narrower for more steps
 HEAD_DIM = 64           # smaller heads = more heads (10 vs 5) for richer attention
 WINDOW_PATTERN = "L"    # revert to full attention (optimal)
 
@@ -464,7 +464,7 @@ FINAL_LR_FRAC = 0.15    # optimal (revert from 0.16 test)
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
 # Model size
-DEPTH = 4                # testing deeper model for more capacity
+DEPTH = 3                # revert to optimal
 DEVICE_BATCH_SIZE = 8    # per-device batch size (smaller might reduce per-step overhead)
 EMA_DECAY = 0.92         # optimal EMA decay (revert from 0.94 test)
 
