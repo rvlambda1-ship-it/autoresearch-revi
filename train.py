@@ -459,7 +459,7 @@ SCALAR_LR = 0.2         # current best (revert for run 339 EMBEDDING_LR test)
 WEIGHT_DECAY = 0.1      # cautious weight decay for Muon
 ADAM_BETAS = (0.9, 0.95) # Adam betas
 WARMUP_RATIO = 0.005    # near-zero warmup: maximize steps at peak LR
-WARMDOWN_RATIO = 0.35   # testing between 0.3 and 0.4
+WARMDOWN_RATIO = 0.32   # fine-tuning near 0.3 optimal
 FINAL_LR_FRAC = 0.15    # slightly higher final LR
 USE_MUON = True          # re-enabled: fp16 embed crash was the real issue, not Muon
 
