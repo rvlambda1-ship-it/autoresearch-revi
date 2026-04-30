@@ -26,3 +26,4 @@ db7ddfa	1.826542	1119.9	3688	discard	Run 39: MATRIX_LR=0.014 (slightly worse tha
 24482d3	1.838498	1119.9	3771	discard	Run 46: FINAL_LR_FRAC=0.14 (still regression)
 f4048cc	1.839733	1119.9	3941	discard	Run 47: FINAL_LR_FRAC=0.16 (still regression)
 b793188	1.838268	1119.9	3924	discard	Run 48: UNEMBEDDING_LR=0.010 (regression)
+52489a7	1.838074	1119.9	4011	discard	Run 49: UNEMBEDDING_LR=0.006 (regression)
