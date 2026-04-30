@@ -22,3 +22,4 @@ db7ddfa	1.826542	1119.9	3688	discard	Run 39: MATRIX_LR=0.014 (slightly worse tha
 4e0d49f	1.826084	1119.9	3688	discard	Run 42: WARMDOWN_RATIO=0.35 (worse than 0.3)
 0e25dfe	1.825967	1119.9	3688	discard	Run 43: WARMDOWN_RATIO=0.32 (very close but slightly worse)
 7344b13	1.826342	1119.9	3688	discard	Run 44: WARMDOWN_RATIO=0.28 (worse than 0.3)
+97ebcc3	1.838927	1119.9	3626	discard	Run 45: FINAL_LR_FRAC=0.12 (too aggressive decay)
